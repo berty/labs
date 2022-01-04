@@ -1,0 +1,29 @@
+import React from 'react'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { NavigationContainerRef, useNavigation as useReactNavigation, NavigationProp } from '@react-navigation/native'
+
+import { OnBoarding, Home } from '@berty-labs/components'
+
+import { ScreensParams } from './types'
+
+export type { ScreensParams, ScreenProps, ScreenFC } from './types'
+
+export const isReadyRef: React.MutableRefObject<any> = React.createRef()
+export const navigationRef = React.createRef<NavigationContainerRef<ScreensParams>>()
+export const useNavigation = () => useReactNavigation<NavigationProp<ScreensParams>>()
+
+const NavigationStack = createNativeStackNavigator()
+export const Navigation: React.FC = React.memo(() => {
+  return (
+    <NavigationStack.Navigator initialRouteName='OnBoarding'>
+      <NavigationStack.Screen
+        name={'Home'}
+        component={Home}
+      />
+      <NavigationStack.Screen
+        name={'OnBoarding'}
+        component={OnBoarding}
+      />
+    </NavigationStack.Navigator>
+  )
+})

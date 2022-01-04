@@ -12,8 +12,12 @@ kill-program-using-port = $(foreach port,$(1),$(eval pid ?= $(shell lsof -t -i :
 
 #### iOS
 
+.PHONY: ios.app_deps
+ios.app_deps:
+	cd ios && pod install
+
 .PHONY: ios
-ios:
+ios: ios.app_deps
 	npx react-native run-ios \
 		--port="$(METRO_RN_PORT)" \
 		$(if $(IOS_DEVICE),$(IOS_UDID)='$(IOS_DEVICE)',) \
