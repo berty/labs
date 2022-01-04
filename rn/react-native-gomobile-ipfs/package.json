@@ -1,0 +1,44 @@
+{
+  "name": "react-native-gomobile-ipfs",
+  "title": "React Native gomobile-ipfs bindings",
+  "version": "0.1.0",
+  "description": "React Native bindings for gomobile-ipfs",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "README.md",
+    "android",
+    "index.js",
+    "ios",
+    "react-native-gomobile-ipfs.podspec"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tesseract-one/react-native-gomobile-ipfs.git",
+    "baseUrl": "https://github.com/tesseract-one/react-native-gomobile-ipfs"
+  },
+  "keywords": [
+    "react-native"
+  ],
+  "author": {
+    "name": "Tesseract Systemc, Inc.",
+    "email": "info@tesseract.one"
+  },
+  "license": "Apache-2.0",
+  "licenseFilename": "LICENSE",
+  "readmeFilename": "README.md",
+  "peerDependencies": {
+    "react": ">=16.13.0 <17.0.0",
+    "react-native": ">=0.60.0-rc.0 <1.0.x"
+  },
+  "devDependencies": {
+    "react": "^16.13.0",
+    "react-native": "^0.63.0"
+  },
+  "dependencies": {
+    "base64-js": "^1.3.0"
+  }
+}
