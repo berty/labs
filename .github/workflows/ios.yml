@@ -86,7 +86,7 @@ jobs:
         uses: actions/cache@v2.1.6
         with:
           path: rn/ios/vendor/bundle
-          key: ${{ runner.OS }}-bundle-v1-${{ hashFiles('rn/Gemfile.lock') }}
+          key: ${{ runner.OS }}-bundle-v2-${{ hashFiles('rn/Gemfile.lock') }}
           restore-keys: ${{ runner.OS }}-bundle-v2-
 
       - name: Setup macOS keychain
