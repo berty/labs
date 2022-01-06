@@ -20,7 +20,7 @@ export const OnBoarding: ScreenFC<'OnBoarding'> = () => {
 				<BertyLabsLogo width={200} />
 				<Splash width={227} height={177} />
 				<Button
-					title={canContinue ? 'DISCOVER' : 'STARTING IPFS..'}
+					title={canContinue ? 'DISCOVER' : 'STARTING IPFS...'}
 					disabled={!canContinue}
 					onPress={() => navigation.navigate('Home')}
 				/>
