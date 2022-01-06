@@ -7,6 +7,7 @@ import {
 } from '@react-navigation/native'
 
 import { OnBoarding, Home } from '@berty-labs/components'
+import { ServicesHealth, GatewaysRace } from '@berty-labs/screens'
 
 import { ScreensParams } from './types'
 
@@ -16,7 +17,7 @@ export const isReadyRef: React.MutableRefObject<any> = React.createRef()
 export const navigationRef = React.createRef<NavigationContainerRef<ScreensParams>>()
 export const useNavigation = () => useReactNavigation<NavigationProp<ScreensParams>>()
 
-const NavigationStack = createNativeStackNavigator()
+const NavigationStack = createNativeStackNavigator<ScreensParams>()
 export const Navigation: React.FC = React.memo(() => {
 	return (
 		<NavigationStack.Navigator initialRouteName='OnBoarding'>
@@ -26,6 +27,8 @@ export const Navigation: React.FC = React.memo(() => {
 				component={OnBoarding}
 				options={{ headerShown: false }}
 			/>
+			<NavigationStack.Screen name='ServicesHealth' component={ServicesHealth} />
+			<NavigationStack.Screen name='GatewaysRace' component={GatewaysRace} />
 		</NavigationStack.Navigator>
 	)
 })

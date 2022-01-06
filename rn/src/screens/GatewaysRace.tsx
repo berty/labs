@@ -1,4 +1,8 @@
 import React from 'react'
+import { SafeAreaView } from 'react-native'
+
+import { ScreenFC } from '@berty-labs/navigation'
+import { defaultColors } from '@berty-labs/styles'
 import { View, Text, Image, useColorScheme, ActivityIndicator } from 'react-native'
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 
@@ -12,7 +16,7 @@ const style = { width: 42, height: 42 }
 
 export const IPFSDemo: React.FC = () => {
 	const isDarkMode = useColorScheme() === 'dark'
-	const mobileIPFS = useGomobileIPFS('ipfs-repos/default-5')
+	const mobileIPFS = useGomobileIPFS()
 	const textStyle = {
 		color: isDarkMode ? Colors.white : Colors.black,
 	}
@@ -46,13 +50,13 @@ export const IPFSDemo: React.FC = () => {
 		return <Text style={textStyle}>IPFS: {mobileIPFS.state}</Text>
 	}
 	return (
-		<View style={{ flexDirection: 'row' }}>
+		<View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 30 }}>
 			<View>
-				<Text style={textStyle}>External gateway:</Text>
+				<Text style={textStyle}>External gateway</Text>
 				<Image style={style} source={{ uri: externalGatewayURL + superlativeApe }} />
 			</View>
 			<View>
-				<Text style={textStyle}>Gomobile gateway:</Text>
+				<Text style={textStyle}>Gomobile gateway</Text>
 				{imageURI ? (
 					<Image
 						style={style}
@@ -65,5 +69,13 @@ export const IPFSDemo: React.FC = () => {
 				)}
 			</View>
 		</View>
+	)
+}
+
+export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
+	return (
+		<SafeAreaView style={{ backgroundColor: defaultColors.background, flex: 1 }}>
+			<IPFSDemo />
+		</SafeAreaView>
 	)
 }
