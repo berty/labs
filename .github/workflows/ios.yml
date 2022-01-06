@@ -1,0 +1,145 @@
+name: iOS
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+    paths:
+      - "go/**"
+      - "!go/**.md"
+      - "go.*"
+      - "**.go"
+      - "rn/**"
+      - ".github/workflows/ios.yml"
+  pull_request:
+    paths:
+      - "go/**"
+      - "!go/**.md"
+      - "go.*"
+      - "**.go"
+      - "rn/**"
+      - "!rn/packages/berty-i18n/locale/*/*.json"
+      - ".github/workflows/ios.yml"
+
+jobs:
+  mac_runner_matrix_builder:
+    name: macOS matrix builder
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - id: set-matrix
+        run: |
+          # usage: node .github/workflows/mac-runner-matrix-builder.js STRATEGY
+          #
+          #  STRATEGY
+          #    random         pick a random runner configuration
+          #    dc4            pick the dc4 runner configuration
+          #    github         pick the github runner configuration
+          #    all            pick all the runner configurations (in parallel)
+          #    optimized      WIP
+          #
+          # TODO: use a github action secret to pass the builder strategy dynamically
+          node .github/workflows/mac-runner-matrix-builder.js dc4
+
+  build:
+    needs: mac_runner_matrix_builder
+    name: Build for iOS
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.mac_runner_matrix_builder.outputs.matrix)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }} # see https://github.com/actions/checkout/issues/299
+
+      - name: Setup XCode
+        if: ${{ !matrix.selfhosted }}
+        # disabled on self-hosted because it requires authentication
+        uses: maxim-lobanov/setup-xcode@v1.4.0
+        with:
+          xcode-version: ${{ matrix.xcode }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.5.0
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Setup Bundler
+        if: ${{ matrix.selfhosted }}
+        working-directory: ./rn/ios
+        run: |
+          gem --version
+          gem install bundler --user-install
+          bundler -v
+          bundle update --bundler
+
+      - name: Cache Ruby modules
+        uses: actions/cache@v2.1.6
+        with:
+          path: rn/ios/vendor/bundle
+          key: ${{ runner.OS }}-bundle-v1-${{ hashFiles('rn/Gemfile.lock') }}
+          restore-keys: ${{ runner.OS }}-bundle-v2-
+
+      - name: Setup macOS keychain
+        working-directory: rn/ios/dummy-identity
+        run: |
+          set -x
+          KEYCHAIN_PATH=$RUNNER_TEMP/dummy.keychain
+
+          security create-keychain -p "dummypass" $KEYCHAIN_PATH
+          security default-keychain -s $KEYCHAIN_PATH
+          security unlock-keychain -p "dummypass" $KEYCHAIN_PATH
+          security set-keychain-settings $KEYCHAIN_PATH
+          security import berty-dummy.p12 -t priv -f pkcs12 -P "dummypass" -T /usr/bin/codesign -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "dummypass" $KEYCHAIN_PATH
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install iOS app deps (node_modules)
+        working-directory: rn
+        run: make node_modules/.fresh
+
+      - name: Install iOS app deps (XCode Workspace)
+        working-directory: rn
+        run: make ios/Pods/.fresh
+
+      - name: Build the Archive
+        working-directory: rn
+        run: |
+          xcodebuild archive \
+                CODE_SIGN_IDENTITY="" \
+                CODE_SIGNING_ALLOWED=NO \
+                ONLY_ACTIVE_ARCH=NO  \
+                EXCLUDED_ARCHS='armv7 armv7s' \
+                -workspace ios/BertyLabs.xcworkspace \
+                -scheme "BertyLabs" \
+                -sdk iphoneos \
+                -archivePath $RUNNER_TEMP/BertyLabs.xcarchive
+
+      - name: Patch and sign the Archive
+        working-directory: rn
+        run: |
+          for lib in $RUNNER_TEMP/BertyLabs.xcarchive/Products/Applications/BertyLabs.app/Frameworks/*.dylib; do
+            lipo -remove armv7 -remove armv7s "$lib" -output "$lib"
+          done
+          codesign -fs "Berty Dummy" $RUNNER_TEMP/BertyLabs.xcarchive/Products/Applications/BertyLabs.app
+          mkdir Payload
+          mv $RUNNER_TEMP/BertyLabs.xcarchive/Products/Applications/BertyLabs.app Payload/
+          zip -r ${{ github.workspace }}/BertyLabs.dummy-signed-ipa Payload
+
+      - name: Upload the Archive
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ github.workspace }}/BertyLabs.dummy-signed-ipa
+          name: berty-labs-${{github.sha}}.dummy-signed-ipa
+          if-no-files-found: error
