@@ -3,18 +3,21 @@ import { NavigationContainer } from '@react-navigation/native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { navigationRef, isReadyRef, Navigation } from './navigation'
+import { GomobileIPFSProvider } from './ipfsutil'
 
 const App = () => {
 	return (
 		<SafeAreaProvider>
-			<NavigationContainer
-				ref={navigationRef}
-				onReady={() => {
-					isReadyRef.current = true
-				}}
-			>
-				<Navigation />
-			</NavigationContainer>
+			<GomobileIPFSProvider>
+				<NavigationContainer
+					ref={navigationRef}
+					onReady={() => {
+						isReadyRef.current = true
+					}}
+				>
+					<Navigation />
+				</NavigationContainer>
+			</GomobileIPFSProvider>
 		</SafeAreaProvider>
 	)
 }

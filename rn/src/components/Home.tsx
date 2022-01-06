@@ -5,9 +5,7 @@ import { BertyLabsLogo, Search, TextBerty, TextLabs } from '@berty-labs/assets'
 import { ScreenFC } from '@berty-labs/navigation/types'
 import { defaultColors } from '@berty-labs/styles'
 
-import { Button } from './shared-components'
 import { ToolsList } from './ToolsList'
-import { IPFSDemo } from './IPFSDemo'
 
 const HeaderHome: React.FC = () => {
 	return (
@@ -58,8 +56,6 @@ export const Home: ScreenFC<'Home'> = () => {
 			<ScrollView style={{ marginHorizontal: 20 }}>
 				<HeaderHome />
 				<ToolsList />
-				<IPFSDemo />
-				<Button title='CONNECT' />
 			</ScrollView>
 		</SafeAreaView>
 	)

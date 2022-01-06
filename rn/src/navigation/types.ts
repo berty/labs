@@ -6,6 +6,8 @@ export type ScreensParams = {
 	OnBoarding: undefined
 	Home: undefined
 	IPFSWebUI: undefined
+	ServicesHealth: undefined
+	GatewaysRace: undefined
 }
 
 export type ScreenProps<T extends keyof ScreensParams> = StackScreenProps<ScreensParams, T>

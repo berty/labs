@@ -1,5 +1,5 @@
 import { useMountEffect } from '@berty-labs/reactutil'
-import React from 'react'
+import React, { useContext } from 'react'
 import { IPFS } from 'react-native-gomobile-ipfs'
 
 export type GomobileIPFSState =
@@ -7,20 +7,26 @@ export type GomobileIPFSState =
 			state: 'loading'
 			ipfs?: undefined
 			gatewayURL?: undefined
+			apiURL?: undefined
 	  }
 	| {
 			state: 'up'
 			ipfs: IPFS
 			gatewayURL: string
+			apiURL: string
 	  }
-
-const loadingState: GomobileIPFSState = { state: 'loading' }
 
 export type GomobileIPFSOptions = {
 	gatewayMaddr?: string
 }
 
-export const useGomobileIPFS = (
+const loadingState: GomobileIPFSState = { state: 'loading' }
+
+const GomobileIPFSContext = React.createContext<GomobileIPFSState>(loadingState)
+
+let nodeState: GomobileIPFSState | undefined
+
+export const useGomobileIPFSNode = (
 	path = 'ipfs-repos/default-0',
 	opts?: GomobileIPFSOptions,
 ): GomobileIPFSState => {
@@ -28,6 +34,10 @@ export const useGomobileIPFS = (
 	const gatewayMaddr = opts?.gatewayMaddr || '/ip4/127.0.0.1/tcp/4242'
 
 	useMountEffect(() => {
+		if (nodeState) {
+			setState(nodeState)
+			return
+		}
 		let canceled = false
 		let clean = async () => {}
 		const start = async () => {
@@ -36,7 +46,7 @@ export const useGomobileIPFS = (
 			const ipfs = await IPFS.create(path)
 			if (canceled) {
 				console.log('cancel 0')
-				ipfs.free()
+				await ipfs.free()
 				return
 			}
 			console.log(ipfs)
@@ -45,11 +55,11 @@ export const useGomobileIPFS = (
 			console.log('starting ipfs node')
 			await ipfs.start()
 			clean = async () => {
-				console.log('stoping ipfs node')
-				await ipfs.stop()
-				console.log('freeing ipfs node')
-				await ipfs.free()
-				console.log('ipfs node free')
+				/*console.log('stoping ipfs node')
+                await ipfs.stop()
+                console.log('freeing ipfs node')
+                await ipfs.free()
+                console.log('ipfs node free')*/
 			}
 			if (canceled) {
 				await clean()
@@ -58,9 +68,17 @@ export const useGomobileIPFS = (
 			}
 			console.log('started ipfs node')
 
+			// Serve API
+			const finalAPIMaddr = await ipfs.serveAPI('5001')
+			console.log('ipfs api:', finalAPIMaddr)
+			if (canceled) {
+				console.log('cancel 2')
+				return
+			}
+
 			// Serve gateway
 			const finalGatewayMaddr = await ipfs.serveGateway(gatewayMaddr)
-			console.log('ipfs gateway:', gatewayMaddr)
+			console.log('ipfs gateway:', finalGatewayMaddr)
 			if (canceled) {
 				console.log('cancel 2')
 				return
@@ -70,7 +88,11 @@ export const useGomobileIPFS = (
 			// FIXME: really parse maddr
 			const gaParts = finalGatewayMaddr.split('/')
 			const gatewayURL = `http://${gaParts[2]}:${gaParts[4]}`
-			setState({ gatewayURL, ipfs, state: 'up' })
+			const aaParts = finalAPIMaddr.split('/')
+			const apiURL = `http://${aaParts[2]}:${aaParts[4]}`
+			const st: GomobileIPFSState = { gatewayURL, apiURL, ipfs, state: 'up' }
+			nodeState = st
+			setState(st)
 		}
 		start()
 		return () => {
@@ -80,4 +102,13 @@ export const useGomobileIPFS = (
 	})
 
 	return state
+}
+
+export const GomobileIPFSProvider: React.FC = ({ children }) => {
+	const state = useGomobileIPFSNode()
+	return <GomobileIPFSContext.Provider value={state}>{children}</GomobileIPFSContext.Provider>
+}
+
+export const useGomobileIPFS = () => {
+	return useContext(GomobileIPFSContext)
 }
