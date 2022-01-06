@@ -1,0 +1,29 @@
+name: JS
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+  pull_request:
+
+build-and-lint:
+  runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      node:
+        #- 10.x
+        #- 12.x
+        - 14.x
+  steps:
+    - uses: actions/checkout@v2.4.0
+    - name: Use Node.js ${{ matrix.node }}
+      uses: actions/setup-node@v2.5.0
+      with:
+        node-version: ${{ matrix.node }}
+    - name: Install node modules
+      working-directory: rn
+      run: yarn
+    - name: Lint
+      working-directory: rn
+      run: yarn lint
