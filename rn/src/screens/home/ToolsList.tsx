@@ -62,6 +62,7 @@ export const ToolsList: React.FC = () => {
 			{
 				title: 'NFT Collection',
 				desc: 'Example of nft collection',
+				onPress: () => navigate('NftCollection'),
 				avatar: <Text>🎨</Text>,
 			},
 			{

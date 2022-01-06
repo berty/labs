@@ -8,6 +8,7 @@ export type ScreensParams = {
 	IPFSWebUI: undefined
 	ServicesHealth: undefined
 	GatewaysRace: undefined
+	NftCollection: undefined
 }
 
 export type ScreenProps<T extends keyof ScreensParams> = StackScreenProps<ScreensParams, T>

@@ -88,6 +88,7 @@ GEM
     zeitwerk (2.5.3)
 
 PLATFORMS
+  arm64-darwin-21
   universal-darwin-20
 
 DEPENDENCIES
@@ -96,4 +97,4 @@ DEPENDENCIES
   rexml (~> 3.2)
 
 BUNDLED WITH
-   2.2.15
+   2.2.32
