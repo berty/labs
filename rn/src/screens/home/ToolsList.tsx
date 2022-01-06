@@ -12,7 +12,7 @@ type ToolItemParams = {
 	onPress?: () => void
 }
 
-const ToolItem: React.FC<ToolItemParams & { isLast: boolean }> = ({
+const ToolItem: React.FC<ToolItemParams & { isLast: boolean; searchText: string }> = ({
 	title,
 	desc,
 	avatar,
@@ -50,18 +50,20 @@ const ToolItem: React.FC<ToolItemParams & { isLast: boolean }> = ({
 	)
 }
 
-export const ToolsList: React.FC = () => {
+export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
 	const { navigate } = useNavigation()
+
 	const items = React.useMemo<ToolItemParams[]>(() => {
 		return [
 			{
-				title: 'IPFSWebUI',
-				desc: 'An interface for IPFS Network Analysis',
+				title: 'IPFS Web Interface',
+				desc: 'Inspect IPFS node and network',
+				onPress: () => navigate('IPFSWebUI'),
 				avatar: <IPFSIcon width={40} height={40} />,
 			},
 			{
 				title: 'NFT Collection',
-				desc: 'Example of nft collection',
+				desc: 'Browse an NFT collection',
 				onPress: () => navigate('NftCollection'),
 				avatar: <Text>🎨</Text>,
 			},
@@ -72,19 +74,35 @@ export const ToolsList: React.FC = () => {
 				avatar: <Text>❤️</Text>,
 			},
 			{
-				title: 'Gateways race',
-				desc: 'Run race betweeen gomobile and pinata',
+				title: 'Gateways Race',
+				desc: 'Run race between gomobile and pinata',
 				onPress: () => navigate('GatewaysRace'),
 				avatar: <Text>🚀</Text>,
 			},
 		]
 	}, [navigate])
-	const itemsLength = React.useMemo<number>(() => items.length, [items])
+
+	const itemsWithSearch = React.useMemo(() => {
+		return searchText
+			? items.filter(
+					item =>
+						item.title.toLowerCase().indexOf(searchText) !== -1 ||
+						item.desc.toLowerCase().indexOf(searchText) !== -1,
+			  )
+			: items
+	}, [items, searchText])
 
 	return (
 		<View style={{ marginTop: 15 }}>
-			{items.map((item, index) => {
-				return <ToolItem key={index} {...item} isLast={index < itemsLength - 1} />
+			{itemsWithSearch.map((item, index) => {
+				return (
+					<ToolItem
+						key={index}
+						{...item}
+						searchText={searchText}
+						isLast={index < itemsWithSearch.length - 1}
+					/>
+				)
 			})}
 		</View>
 	)

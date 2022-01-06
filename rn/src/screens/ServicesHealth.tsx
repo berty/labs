@@ -1,9 +1,10 @@
 import React from 'react'
-import { Button, SafeAreaView, Text, View } from 'react-native'
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
 
 import { ScreenFC } from '@berty-labs/navigation'
 import { defaultColors } from '@berty-labs/styles'
 import { useMountEffect } from '@berty-labs/reactutil'
+import { useGomobileIPFS } from '@berty-labs/ipfsutil'
 
 type ServiceStatus =
 	| {
@@ -24,9 +25,9 @@ const Ping: React.FC<{ name: string; address: string }> = ({ name, address }) =>
 
 	const stateStrings: { [key in ServiceStatus['state']]: string } = {
 		init: 'Tap to ping',
-		querying: 'Querrying..',
-		up: 'Up',
-		dead: `Dead${state.deadDetails ? `: ${state.deadDetails}` : ''}`,
+		querying: '🧐 Querying..',
+		up: '💚 Up',
+		dead: `☠ Dead${state.deadDetails ? `\n\n${state.deadDetails}` : ''}`,
 	}
 
 	const refresh = () => {
@@ -54,35 +55,46 @@ const Ping: React.FC<{ name: string; address: string }> = ({ name, address }) =>
 	useMountEffect(refresh)
 
 	return (
-		<View>
-			<Button title={`Ping ${name}`} onPress={refresh} />
-			<Text style={textStyle}>Address: {address}</Text>
-			<Text style={textStyle}>State: {stateStrings[state.state]}</Text>
-		</View>
+		<TouchableOpacity
+			style={{
+				alignItems: 'flex-start',
+				padding: 15,
+				margin: 15,
+				backgroundColor: '#00000030',
+				borderRadius: 15,
+			}}
+			onPress={refresh}
+		>
+			<Text style={[textStyle, { fontSize: 20 }]}>{name}</Text>
+			<Text style={[textStyle, { marginBottom: 15 }]}>Address: {address}</Text>
+			<Text style={textStyle}>{stateStrings[state.state]}</Text>
+		</TouchableOpacity>
 	)
 }
 
-const items = [
-	{
-		name: 'API',
-		address: 'http://127.0.0.1:5001',
-	},
-	{
-		name: 'Gateway',
-		address: 'http://127.0.0.1:4242',
-	},
-	{
-		name: 'WebUI',
-		address: 'http://127.0.0.1:4243',
-	},
-]
-
 export const ServicesHealth: ScreenFC<'ServicesHealth'> = () => {
+	const mobileIPFS = useGomobileIPFS()
+
+	const items = [
+		{
+			name: 'Local IPFS Node API',
+			address: mobileIPFS.apiURL,
+		},
+		{
+			name: 'Local IPFS Gateway',
+			address: mobileIPFS.gatewayURL,
+		},
+		/*{
+			name: 'Dead example',
+			address: "http://127.0.0.1:1234",
+		},*/
+	]
+
 	return (
 		<SafeAreaView style={{ backgroundColor: defaultColors.background, flex: 1 }}>
-			<View style={{ padding: 30 }}>
+			<View style={{ padding: 15 }}>
 				{items.map(item => (
-					<Ping key={item.name} name={item.name} address={item.address} />
+					<Ping key={item.name} name={item.name} address={item.address || ''} />
 				))}
 			</View>
 		</SafeAreaView>

@@ -72,9 +72,9 @@ PODS:
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
   - glog (0.3.5)
-  - Gomobile-IPFS-Bridge (1.1.1):
-    - Gomobile-IPFS-Core (~> 1.1.1)
-  - Gomobile-IPFS-Core (1.1.1)
+  - Gomobile-IPFS-Bridge (1.1.2):
+    - Gomobile-IPFS-Core (~> 1.1.2)
+  - Gomobile-IPFS-Core (1.1.2)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.180)
   - RCT-Folly (2021.06.28.00-v2):
@@ -276,9 +276,11 @@ PODS:
   - React-logger (0.66.4):
     - glog
   - react-native-gomobile-ipfs (0.1.0):
-    - Gomobile-IPFS-Bridge (~> 1.1.1)
+    - Gomobile-IPFS-Bridge (~> 1.1.2)
     - React
   - react-native-safe-area-context (3.3.2):
+    - React-Core
+  - react-native-webview (11.15.1):
     - React-Core
   - React-perflogger (0.66.4)
   - React-RCTActionSheet (0.66.4):
@@ -399,6 +401,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-gomobile-ipfs (from `../react-native-gomobile-ipfs`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -475,6 +478,8 @@ EXTERNAL SOURCES:
     :path: "../react-native-gomobile-ipfs"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -523,8 +528,8 @@ SPEC CHECKSUMS:
   FlipperKit: d8d346844eca5d9120c17d441a2f38596e8ed2b9
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 5337263514dd6f09803962437687240c5dc39aa4
-  Gomobile-IPFS-Bridge: df07d22579326583516093d78ddcd8bb0f965cc1
-  Gomobile-IPFS-Core: eaf0a146a8d686dac3d281a774e5feb05342703c
+  Gomobile-IPFS-Bridge: 766021f9e07526743f54ecc2908aa9f4611b4fe8
+  Gomobile-IPFS-Core: 0efc4c03fbcf8fdcddba8363b0932092e2bdef26
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   RCT-Folly: a21c126816d8025b547704b777a2ba552f3d9fa9
@@ -539,8 +544,9 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 94ce921e1d8ce7023366873ec371f3441383b396
   React-jsinspector: d0374f7509d407d2264168b6d0fad0b54e300b85
   React-logger: 933f80c97c633ee8965d609876848148e3fef438
-  react-native-gomobile-ipfs: af7a73ad63392abf38da81fb00f945ce14d3ec8a
+  react-native-gomobile-ipfs: c5491024e2386c69def23c4eab59a1ef141ed452
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-webview: ea4899a1056c782afa96dd082179a66cbebf5504
   React-perflogger: 93075d8931c32cd1fce8a98c15d2d5ccc4d891bd
   React-RCTActionSheet: 7d3041e6761b4f3044a37079ddcb156575fb6d89
   React-RCTAnimation: 743e88b55ac62511ae5c2e22803d4f503f2a3a13

@@ -50,6 +50,9 @@ const NFT: React.FC<{
 			if (!nftReply) {
 				return
 			}
+			if (canceled) {
+				return
+			}
 			setNft({ uri: nftReply.url, name: parsedUsableReply.name })
 		}
 		start()
@@ -123,6 +126,9 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 			// recup ipfs json files
 			const files = usableReply.match(regex)
 			if (!files) {
+				return
+			}
+			if (canceled) {
 				return
 			}
 			setIpfsFiles(files)
