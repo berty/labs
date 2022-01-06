@@ -17,10 +17,11 @@ import {
 } from 'react-native/Libraries/NewAppScreen'
 
 import { ScreenFC } from '@berty-labs/navigation/types'
+import { IPFSDemo } from '@berty-labs/IPFSDemo'
 
 const Section: React.FC<{
   title: string;
-}> = ({children, title}) => {
+}> = ({ children, title }) => {
   const isDarkMode = useColorScheme() === 'dark'
   return (
     <View style={styles.sectionContainer}>
@@ -64,6 +65,9 @@ export const Home: ScreenFC<'Home'> = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
+          <Section title="IPFS Demo">
+            <IPFSDemo />
+          </Section>
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
             screen and then come back to see your edits.

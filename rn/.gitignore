@@ -65,3 +65,9 @@ android/app/libs/
 android/app/gradle/
 android/app/gradlew
 android/app/gradlew.bat
+
+# Berty
+
+/.link
+/ios/vendor/
+/gomobile-ipfs/
