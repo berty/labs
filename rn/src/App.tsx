@@ -5,18 +5,18 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { navigationRef, isReadyRef, Navigation } from './navigation'
 
 const App = () => {
-  return (
-    <SafeAreaProvider>
-      <NavigationContainer
-        ref={navigationRef}
-        onReady={() => {
-        isReadyRef.current = true
-        }}
-      >
-        <Navigation />
-      </NavigationContainer>
-    </SafeAreaProvider>
-  )
+	return (
+		<SafeAreaProvider>
+			<NavigationContainer
+				ref={navigationRef}
+				onReady={() => {
+					isReadyRef.current = true
+				}}
+			>
+				<Navigation />
+			</NavigationContainer>
+		</SafeAreaProvider>
+	)
 }
 
 export default App
