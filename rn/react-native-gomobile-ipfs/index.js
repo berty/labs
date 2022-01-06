@@ -92,6 +92,14 @@ export class IPFS {
     return GomobileIpfs.ipfsStart(this._ptr);
   }
 
+  serveAPI(onTCPPort) {
+    return GomobileIpfs.ipfsServeAPI(this._ptr, onTCPPort);
+  }
+
+  serveGateway(onMultiaddr) {
+    return GomobileIpfs.ipfsServeGateway(this._ptr, onMultiaddr);
+  }
+
   stop() {
     return GomobileIpfs.ipfsStop(this._ptr);
   }

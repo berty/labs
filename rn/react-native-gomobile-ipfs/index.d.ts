@@ -32,6 +32,8 @@ export class IPFS {
   public static create(repoPath?: string, internalStorage?: boolean): Promise<IPFS>;
 
   public start(): Promise<void>;
+  public serveAPI(onTCPPort: string): Promise<string>;
+  public serveGateway(onMultiaddr: string): Promise<string>;
   public stop(): Promise<void>;
   public restart(): Promise<void>;
 

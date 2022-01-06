@@ -11,6 +11,16 @@ RCT_EXTERN_METHOD(ipfsStart:(NSString *)pointer
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(ipfsServeAPI:(NSString *)repoPath
+                  onTCPPort:(NSString *)onTCPPort
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(ipfsServeGateway:(NSString *)repoPath
+                  onMultiaddr:(NSString *)onMultiaddr
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(ipfsStop:(NSString *)pointer
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
@@ -47,6 +57,7 @@ RCT_EXTERN_METHOD(ipfsSetConfigKey:(NSString *)pointer
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
+/*
 RCT_EXTERN_METHOD(ipfsEnablePubsubExperiment:(NSString *)pointer
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
@@ -54,6 +65,7 @@ RCT_EXTERN_METHOD(ipfsEnablePubsubExperiment:(NSString *)pointer
 RCT_EXTERN_METHOD(ipfsEnableNamesysPubsub:(NSString *)pointer
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
+*/
 
 RCT_EXTERN_METHOD(ipfsSetDNSPair:(NSString *)primary
                   secondary:(NSString *)secondary

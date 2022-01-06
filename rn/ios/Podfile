@@ -4,6 +4,9 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '11.0'
 
 target 'BertyLabs' do
+  pod 'Gomobile-IPFS-Bridge', :podspec => "./vendored_pods/Gomobile-IPFS-Bridge.podspec"
+  pod 'Gomobile-IPFS-Core', :podspec => "./vendored_pods/Gomobile-IPFS-Core.podspec"
+
   config = use_native_modules!
 
   use_react_native!(

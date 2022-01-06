@@ -34,6 +34,30 @@ public class GomobileIpfs: NSObject {
             try IPFS.unretained(pointer).start()
         }
     }
+
+    @objc(ipfsServeAPI:onTCPPort:resolve:reject:)
+    public func ipfsServe(
+      pointer:          String,
+      onTCPPort:        String,
+      resolve:          RCTPromiseResolveBlock,
+      reject:           RCTPromiseRejectBlock
+    ) {
+        tryReact(resolve: resolve, reject: reject) {
+            try IPFS.unretained(pointer).serveAPI(onTCPPort: onTCPPort)
+        }
+    }
+
+    @objc(ipfsServeGateway:onMultiaddr:resolve:reject:)
+    public func ipfsServeGateway(
+      pointer:          String,
+      onMultiaddr:      String,
+      resolve:          RCTPromiseResolveBlock,
+      reject:           RCTPromiseRejectBlock
+    ) {
+        tryReact(resolve: resolve, reject: reject) {
+            try IPFS.unretained(pointer).serveGateway(onMultiaddr: onMultiaddr)
+        }
+    }
     
     @objc(ipfsStop:resolve:reject:)
     public func ipfsStop(
@@ -128,6 +152,7 @@ public class GomobileIpfs: NSObject {
         }
     }
     
+    /*
     @objc(ipfsEnablePubsubExperiment:resolve:reject:)
     public func ipfsEnablePubsubExperiment(
       pointer:          String,
@@ -149,6 +174,7 @@ public class GomobileIpfs: NSObject {
             try IPFS.unretained(pointer).enableNamesysPubsub()
         }
     }
+    */
     
     @objc(ipfsSetDNSPair:secondary:resolve:reject:)
     public func ipfsSetDNSPair(
