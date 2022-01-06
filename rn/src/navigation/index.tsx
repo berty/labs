@@ -10,9 +10,10 @@ import {
 } from '@react-navigation/native'
 
 import { ServicesHealth, GatewaysRace, NftCollection, OnBoarding, Home } from '@berty-labs/screens'
+import { defaultColors } from '@berty-labs/styles'
 
 import { ScreensParams } from './types'
-import { defaultColors } from '@berty-labs/styles'
+import { IPFSWebUI } from '@berty-labs/screens/IPFSWebUI'
 
 export type { ScreensParams, ScreenProps, ScreenFC } from './types'
 
@@ -59,6 +60,7 @@ export const Navigation: React.FC = React.memo(() => {
 				component={NftCollection}
 				options={screenOptions}
 			/>
+			<NavigationStack.Screen name={'IPFSWebUI'} component={IPFSWebUI} options={screenOptions} />
 		</NavigationStack.Navigator>
 	)
 })

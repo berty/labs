@@ -7,7 +7,7 @@ import { defaultColors } from '@berty-labs/styles'
 
 import { ToolsList } from './ToolsList'
 
-const HeaderHome: React.FC = () => {
+const HeaderHome: React.FC<{ onSearchChange: (s: string) => void }> = ({ onSearchChange }) => {
 	return (
 		<View>
 			<View
@@ -41,9 +41,11 @@ const HeaderHome: React.FC = () => {
 			>
 				<Search width={20} height={20} />
 				<TextInput
-					placeholderTextColor={defaultColors.white}
+					autoCorrect={false}
+					placeholderTextColor={defaultColors.white + 'B0'}
 					style={{ color: defaultColors.white, flex: 1, marginLeft: 10, fontFamily: 'Open Sans' }}
 					placeholder='Search for tool'
+					onChange={evt => onSearchChange(evt.nativeEvent.text)}
 				/>
 			</View>
 		</View>
@@ -51,11 +53,12 @@ const HeaderHome: React.FC = () => {
 }
 
 export const Home: ScreenFC<'Home'> = () => {
+	const [searchString, setSearchString] = React.useState('')
 	return (
 		<SafeAreaView style={{ backgroundColor: defaultColors.background, flex: 1 }}>
 			<ScrollView style={{ marginHorizontal: 20 }}>
-				<HeaderHome />
-				<ToolsList />
+				<HeaderHome onSearchChange={setSearchString} />
+				<ToolsList searchText={searchString.toLowerCase()} />
 			</ScrollView>
 		</SafeAreaView>
 	)

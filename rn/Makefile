@@ -39,7 +39,7 @@ ios/vendor/bundle: ios/Gemfile ios/Gemfile.lock
 	cd ios && bundle install
 	touch $@
 
-ios/Pods/.fresh: ios/Podfile ios/Podfile.lock node_modules/.fresh ios/vendor/bundle $(wildcard vendored_pods/%)
+ios/Pods/.fresh: ios/Podfile ios/Podfile.lock node_modules/.fresh ios/vendor/bundle $(wildcard ios/vendored_pods/%)
 	rm -fr ios/Pods
 	cd ios && bundle exec pod install --repo-update
 	touch $@
@@ -57,6 +57,16 @@ ios: node_modules/.fresh ios/Pods/.fresh
 android: node_modules/.fresh
 	npx react-native run-android \
 		--port="$(METRO_RN_PORT)"
+
+#### Lint
+
+.PHONY: lint
+lint: node_modules/.fresh
+	yarn lint
+
+.PHONY: lint.fix
+lint.fix: node_modules/.fresh
+	yarn lint --fix
 
 #### React-Native
 
