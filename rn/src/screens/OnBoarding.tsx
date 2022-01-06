@@ -6,7 +6,7 @@ import { useNavigation, ScreenFC } from '@berty-labs/navigation'
 import { defaultColors } from '@berty-labs/styles'
 import { useGomobileIPFS } from '@berty-labs/ipfsutil'
 
-import { Button } from './shared-components'
+import { Button } from '@berty-labs/components'
 
 export const OnBoarding: ScreenFC<'OnBoarding'> = () => {
 	const navigation = useNavigation()

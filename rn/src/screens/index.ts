@@ -1,2 +1,5 @@
 export * from './ServicesHealth'
 export * from './GatewaysRace'
+export * from './NftCollection'
+export * from './OnBoarding'
+export * from './home'

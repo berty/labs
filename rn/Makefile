@@ -1,7 +1,6 @@
 ## User variables
 
 METRO_RN_PORT ?= 8081
-IOS_UDID ?= --udid
 IOS_RN_FLAGS ?=
 IOS_DEVICE ?=
 ANDROID_DEVICE ?=
@@ -49,7 +48,7 @@ ios/Pods/.fresh: ios/Podfile ios/Podfile.lock node_modules/.fresh ios/vendor/bun
 ios: node_modules/.fresh ios/Pods/.fresh
 	npx react-native run-ios \
 		--port="$(METRO_RN_PORT)" \
-		$(if $(IOS_UDID),--udid='$(IOS_UDID)',) \
+		$(if $(IOS_DEVICE),--udid='$(IOS_DEVICE)',) \
 		$(IOS_RN_FLAGS)
 
 #### Android
