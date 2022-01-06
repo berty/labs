@@ -1,6 +1,10 @@
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { NavigationContainerRef, useNavigation as useReactNavigation, NavigationProp } from '@react-navigation/native'
+import {
+	NavigationContainerRef,
+	useNavigation as useReactNavigation,
+	NavigationProp,
+} from '@react-navigation/native'
 
 import { OnBoarding, Home } from '@berty-labs/components'
 
@@ -14,16 +18,14 @@ export const useNavigation = () => useReactNavigation<NavigationProp<ScreensPara
 
 const NavigationStack = createNativeStackNavigator()
 export const Navigation: React.FC = React.memo(() => {
-  return (
-    <NavigationStack.Navigator initialRouteName='OnBoarding'>
-      <NavigationStack.Screen
-        name={'Home'}
-        component={Home}
-      />
-      <NavigationStack.Screen
-        name={'OnBoarding'}
-        component={OnBoarding}
-      />
-    </NavigationStack.Navigator>
-  )
+	return (
+		<NavigationStack.Navigator initialRouteName='OnBoarding'>
+			<NavigationStack.Screen name={'Home'} component={Home} options={{ headerShown: false }} />
+			<NavigationStack.Screen
+				name={'OnBoarding'}
+				component={OnBoarding}
+				options={{ headerShown: false }}
+			/>
+		</NavigationStack.Navigator>
+	)
 })

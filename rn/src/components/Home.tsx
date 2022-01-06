@@ -1,110 +1,67 @@
 import React from 'react'
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native'
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen'
+import { SafeAreaView, View, ScrollView, TextInput } from 'react-native'
 
+import { BertyLabsLogo, Search, TextBerty, TextLabs } from '@berty-labs/assets'
 import { ScreenFC } from '@berty-labs/navigation/types'
-import { IPFSDemo } from '@berty-labs/IPFSDemo'
+import { defaultColors } from '@berty-labs/styles'
+// import { IPFSDemo } from '@berty-labs/IPFSDemo'
 
-const Section: React.FC<{
-  title: string;
-}> = ({ children, title }) => {
-  const isDarkMode = useColorScheme() === 'dark'
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  )
+import { Button } from './shared-components'
+import { ToolsList } from './ToolsList'
+
+const HeaderHome: React.FC = () => {
+	return (
+		<View>
+			<View
+				style={{
+					flexDirection: 'row',
+					justifyContent: 'space-between',
+					alignItems: 'center',
+					flex: 1,
+				}}
+			>
+				<View style={{ flex: 1 }}>
+					<TextBerty height={13} />
+				</View>
+				<View>
+					<BertyLabsLogo width={60} height={60} />
+				</View>
+				<View style={{ flex: 1 }}>
+					<TextLabs height={15} style={{ alignSelf: 'flex-end' }} />
+				</View>
+			</View>
+			<View
+				style={{
+					flexDirection: 'row',
+					height: 50,
+					flex: 1,
+					borderRadius: 8,
+					backgroundColor: defaultColors.black,
+					alignItems: 'center',
+					paddingLeft: 20,
+				}}
+			>
+				<Search width={20} height={20} />
+				<TextInput
+					placeholderTextColor={defaultColors.white}
+					style={{ color: defaultColors.white, flex: 1, marginLeft: 10, fontFamily: 'Open Sans' }}
+					placeholder='Search for tool'
+				/>
+			</View>
+		</View>
+	)
 }
 
 export const Home: ScreenFC<'Home'> = () => {
-  const isDarkMode = useColorScheme() === 'dark'
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  }
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="IPFS Demo">
-            <IPFSDemo />
-          </Section>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  )
+	return (
+		<SafeAreaView style={{ backgroundColor: defaultColors.background, flex: 1 }}>
+			<ScrollView style={{ marginHorizontal: 20 }}>
+				<HeaderHome />
+				<ToolsList />
+				<Button title='CONNECT' />
+			</ScrollView>
+		</SafeAreaView>
+	)
 }
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-})
 
 export default Home
