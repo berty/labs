@@ -16,7 +16,7 @@ export const OnBoarding: ScreenFC<'OnBoarding'> = () => {
 	return (
 		<SafeAreaView style={{ backgroundColor: defaultColors.background, flex: 1 }}>
 			<StatusBar barStyle='light-content' />
-			<View style={{ justifyContent: 'center', alignItems: 'center', top: 50 }}>
+			<View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
 				<BertyLabsLogo width={200} />
 				<Splash width={227} height={177} />
 				<Button
