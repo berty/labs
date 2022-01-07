@@ -7,6 +7,7 @@ import {
 	SafeAreaView,
 	FlatList,
 	Dimensions,
+	useWindowDimensions,
 } from 'react-native'
 
 import { defaultColors } from '@berty-labs/styles'
@@ -121,6 +122,7 @@ const NFT: React.FC<{
 export const NftCollection: ScreenFC<'NftCollection'> = () => {
 	const mobileIPFS = useGomobileIPFS()
 	const [ipfsFiles, setIpfsFiles] = React.useState<string[]>([])
+	const winsz = useWindowDimensions()
 
 	const fetchURL = React.useCallback(async (url: string, canceled: boolean) => {
 		console.log('fetching:', url)
@@ -172,19 +174,43 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 				showsVerticalScrollIndicator={false}
 				style={{ alignContent: 'center', marginTop: 20 }}
 				ListHeaderComponent={() => (
-					<View
-						style={{
-							alignItems: 'center',
-							justifyContent: 'center',
-							width: '100%',
-							flexDirection: 'row',
-						}}
-					>
-						<Text
-							style={{ fontSize: 80, color: defaultColors.white, marginTop: 30, marginBottom: 30 }}
+					<View style={{ width: winsz.width, alignItems: 'center', justifyContent: 'center' }}>
+						<View
+							style={{
+								alignItems: 'center',
+								justifyContent: 'center',
+								width: winsz.width,
+								flexDirection: 'row',
+							}}
 						>
-							REKT
-						</Text>
+							<Text
+								style={{
+									fontSize: 80,
+									color: defaultColors.white,
+									marginTop: 30,
+									marginBottom: 30,
+								}}
+							>
+								REKT
+							</Text>
+						</View>
+
+						<View
+							style={{
+								alignItems: 'center',
+								justifyContent: 'center',
+								width: winsz.width,
+							}}
+						>
+							{!ipfsFiles.length && (
+								<>
+									<Text style={{ color: defaultColors.white, opacity: 0.7, marginBottom: 30 }}>
+										Loading NFT list from IPFS...
+									</Text>
+									<ActivityIndicator />
+								</>
+							)}
+						</View>
 					</View>
 				)}
 				contentContainerStyle={{ alignItems: 'flex-start' }}
