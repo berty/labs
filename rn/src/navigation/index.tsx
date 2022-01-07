@@ -48,19 +48,23 @@ export const Navigation: React.FC = React.memo(() => {
 			<NavigationStack.Screen
 				name='ServicesHealth'
 				component={ServicesHealth}
-				options={screenOptions}
+				options={{ ...screenOptions, title: 'Services Health' }}
 			/>
 			<NavigationStack.Screen
 				name='GatewaysRace'
 				component={GatewaysRace}
-				options={screenOptions}
+				options={{ ...screenOptions, title: 'Gateways Race' }}
 			/>
 			<NavigationStack.Screen
 				name={'NftCollection'}
 				component={NftCollection}
-				options={screenOptions}
+				options={{ ...screenOptions, title: 'NFT Collection' }}
 			/>
-			<NavigationStack.Screen name={'IPFSWebUI'} component={IPFSWebUI} options={screenOptions} />
+			<NavigationStack.Screen
+				name={'IPFSWebUI'}
+				component={IPFSWebUI}
+				options={{ ...screenOptions, title: 'IPFS WebUI' }}
+			/>
 		</NavigationStack.Navigator>
 	)
 })
