@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, ViewStyle } from 'react-native'
 
 import { IPFSIcon } from '@berty-labs/assets'
 import { defaultColors } from '@berty-labs/styles'
@@ -26,8 +26,7 @@ const ToolItem: React.FC<ToolItemParams & { isLast: boolean; searchText: string 
 					<View
 						style={{
 							marginRight: 10,
-							width: 50,
-							height: 50,
+							padding: 10,
 							borderColor: defaultColors.grey,
 							borderWidth: 0.5,
 							borderRadius: 50,
@@ -44,10 +43,21 @@ const ToolItem: React.FC<ToolItemParams & { isLast: boolean; searchText: string 
 				</View>
 			</TouchableOpacity>
 			{isLast ? (
-				<View style={{ flex: 1, height: 0.5, backgroundColor: defaultColors.white }} />
+				<View
+					style={{ flex: 1, height: 0.5, backgroundColor: defaultColors.white, opacity: 0.5 }}
+				/>
 			) : null}
 		</>
 	)
+}
+
+const iconsSize = 30
+const utfIconStyle = { fontSize: iconsSize - 6 }
+const utfIconContainerStyle: ViewStyle = {
+	width: iconsSize,
+	height: iconsSize,
+	justifyContent: 'center',
+	alignItems: 'center',
 }
 
 export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
@@ -59,25 +69,37 @@ export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
 				title: 'IPFS Web Interface',
 				desc: 'Inspect IPFS node and network',
 				onPress: () => navigate('IPFSWebUI'),
-				avatar: <IPFSIcon width={40} height={40} />,
+				avatar: <IPFSIcon width={iconsSize} height={iconsSize} />,
 			},
 			{
 				title: 'NFT Collection',
 				desc: 'Browse an NFT collection',
 				onPress: () => navigate('NftCollection'),
-				avatar: <Text>🎨</Text>,
+				avatar: (
+					<View style={utfIconContainerStyle}>
+						<Text style={utfIconStyle}>🎨</Text>
+					</View>
+				),
 			},
 			{
 				title: 'Services Health',
 				desc: 'Check embedded services health',
 				onPress: () => navigate('ServicesHealth'),
-				avatar: <Text>❤️</Text>,
+				avatar: (
+					<View style={utfIconContainerStyle}>
+						<Text style={[utfIconStyle, { position: 'relative', top: 2 }]}>❤️</Text>
+					</View>
+				),
 			},
 			{
 				title: 'Gateways Race',
 				desc: 'Run race between gomobile and pinata',
 				onPress: () => navigate('GatewaysRace'),
-				avatar: <Text>🚀</Text>,
+				avatar: (
+					<View style={utfIconContainerStyle}>
+						<Text style={utfIconStyle}>🚀</Text>
+					</View>
+				),
 			},
 		]
 	}, [navigate])
@@ -86,8 +108,8 @@ export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
 		return searchText
 			? items.filter(
 					item =>
-						item.title.toLowerCase().indexOf(searchText) !== -1 ||
-						item.desc.toLowerCase().indexOf(searchText) !== -1,
+						item.title.toLowerCase().indexOf(searchText) >= 0 ||
+						item.desc.toLowerCase().indexOf(searchText) >= 0,
 			  )
 			: items
 	}, [items, searchText])

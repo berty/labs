@@ -7,6 +7,7 @@ import {
 	SafeAreaView,
 	FlatList,
 	Dimensions,
+	useWindowDimensions,
 } from 'react-native'
 
 import { defaultColors } from '@berty-labs/styles'
@@ -25,9 +26,10 @@ const NFT: React.FC<{
 	) => Promise<Awaited<ReturnType<typeof fetch> | undefined>>
 }> = ({ index, item, fetchURL }) => {
 	const mobileIPFS = useGomobileIPFS()
-	const [nft, setNft] = React.useState<{ uri: string; name: string }>()
-	const sizeImg = 80
+	const [nft, setNft] = React.useState<{ uri: string; name: string; desc: string }>()
+
 	const { width: windowWidth } = Dimensions.get('window')
+	const sizeImg = windowWidth - 30
 
 	React.useEffect(() => {
 		if (!mobileIPFS.gatewayURL) {
@@ -53,7 +55,11 @@ const NFT: React.FC<{
 			if (canceled) {
 				return
 			}
-			setNft({ uri: nftReply.url, name: parsedUsableReply.name })
+			setNft({
+				uri: nftReply.url,
+				name: parsedUsableReply.name,
+				desc: parsedUsableReply.description,
+			})
 		}
 		start()
 		return () => {
@@ -62,28 +68,50 @@ const NFT: React.FC<{
 	}, [fetchURL, item, mobileIPFS.gatewayURL])
 
 	return (
-		<View style={{ height: sizeImg, width: windowWidth / 3 }}>
+		<View
+			style={{
+				alignItems: 'center',
+				justifyContent: 'flex-start',
+				width: windowWidth,
+				paddingHorizontal: 15,
+				marginTop: 30,
+			}}
+		>
 			{nft?.uri && nft?.name ? (
-				<View>
-					<Image
-						key={index}
-						style={{ width: sizeImg, height: sizeImg, alignSelf: 'center' }}
-						source={{ uri: nft?.uri }}
-						onError={({ nativeEvent: { error } }) => console.warn(error)}
-						onLoad={() => console.log('local image loaded')}
-					/>
+				<>
 					<Text
+						selectable={true}
 						style={{
-							fontSize: 14,
+							fontSize: 30,
 							fontFamily: 'Open Sans',
 							color: defaultColors.white,
-							alignSelf: 'center',
+							marginBottom: 30,
 						}}
 						numberOfLines={1}
 					>
 						{nft.name}
 					</Text>
-				</View>
+					<Image
+						key={index}
+						style={{ width: sizeImg, height: sizeImg, marginBottom: 30 }}
+						source={{ uri: nft?.uri }}
+						onError={({ nativeEvent: { error } }) => console.warn(error)}
+						onLoad={() => console.log('local image loaded')}
+					/>
+					<Text
+						selectable={true}
+						style={{
+							opacity: 0.7,
+							fontSize: 15,
+							fontFamily: 'Open Sans',
+							color: defaultColors.white,
+							marginBottom: 30,
+							textAlign: 'justify',
+						}}
+					>
+						{nft.desc}
+					</Text>
+				</>
 			) : (
 				<ActivityIndicator />
 			)}
@@ -94,6 +122,7 @@ const NFT: React.FC<{
 export const NftCollection: ScreenFC<'NftCollection'> = () => {
 	const mobileIPFS = useGomobileIPFS()
 	const [ipfsFiles, setIpfsFiles] = React.useState<string[]>([])
+	const winsz = useWindowDimensions()
 
 	const fetchURL = React.useCallback(async (url: string, canceled: boolean) => {
 		console.log('fetching:', url)
@@ -143,10 +172,48 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 		<SafeAreaView style={{ backgroundColor: defaultColors.background, flex: 1 }}>
 			<FlatList
 				showsVerticalScrollIndicator={false}
-				columnWrapperStyle={{ marginBottom: 40 }}
 				style={{ alignContent: 'center', marginTop: 20 }}
-				contentContainerStyle={{ alignItems: 'center' }}
-				numColumns={3}
+				ListHeaderComponent={() => (
+					<View style={{ width: winsz.width, alignItems: 'center', justifyContent: 'center' }}>
+						<View
+							style={{
+								alignItems: 'center',
+								justifyContent: 'center',
+								width: winsz.width,
+								flexDirection: 'row',
+							}}
+						>
+							<Text
+								style={{
+									fontSize: 80,
+									color: defaultColors.white,
+									marginTop: 30,
+									marginBottom: 30,
+								}}
+							>
+								REKT
+							</Text>
+						</View>
+
+						<View
+							style={{
+								alignItems: 'center',
+								justifyContent: 'center',
+								width: winsz.width,
+							}}
+						>
+							{!ipfsFiles.length && (
+								<>
+									<Text style={{ color: defaultColors.white, opacity: 0.7, marginBottom: 30 }}>
+										Loading NFT list from IPFS...
+									</Text>
+									<ActivityIndicator />
+								</>
+							)}
+						</View>
+					</View>
+				)}
+				contentContainerStyle={{ alignItems: 'flex-start' }}
 				data={ipfsFiles}
 				renderItem={({ item, index }) => <NFT item={item} index={index} fetchURL={fetchURL} />}
 			/>
