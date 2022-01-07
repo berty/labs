@@ -30,9 +30,11 @@
 		<true/>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Run bluetooth experiments</string>
+	<string>Connect to bluetooth peers</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Connect to bluetooth peers</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Connect to embeded gateway</string>
+	<string>Find peers on local network</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UIAppFonts</key>
@@ -54,10 +56,10 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
+	<array/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
