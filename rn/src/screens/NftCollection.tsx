@@ -20,10 +20,7 @@ const superlativeRoot = '/ipfs/QmZdUpu5sC2YPKBdocZqYtLyy2DSBD6WLK7STKFQoDgbYW/me
 const NFT: React.FC<{
 	index: number
 	item: string
-	fetchURL: (
-		url: string,
-		canceled: boolean,
-	) => Promise<Awaited<ReturnType<typeof fetch> | undefined>>
+	fetchURL: (url: string) => Promise<Awaited<ReturnType<typeof fetch> | undefined>>
 }> = ({ index, item, fetchURL }) => {
 	const mobileIPFS = useGomobileIPFS()
 	const [nft, setNft] = React.useState<{ uri: string; name: string; desc: string }>()
@@ -38,8 +35,8 @@ const NFT: React.FC<{
 		let canceled = false
 		const start = async () => {
 			// fetch ipfs json file
-			const fileReply = await fetchURL(mobileIPFS.gatewayURL + item, canceled)
-			if (!fileReply) {
+			const fileReply = await fetchURL(mobileIPFS.gatewayURL + item)
+			if (!fileReply || canceled) {
 				return
 			}
 			const usableReply = await fileReply.text()
@@ -48,11 +45,8 @@ const NFT: React.FC<{
 			// recup nft image
 			const uriFinal = parsedUsableReply.image.match(regex)
 			// fetch nft image
-			const nftReply = await fetchURL(mobileIPFS.gatewayURL + uriFinal, canceled)
-			if (!nftReply) {
-				return
-			}
-			if (canceled) {
+			const nftReply = await fetchURL(mobileIPFS.gatewayURL + uriFinal)
+			if (!nftReply || canceled) {
 				return
 			}
 			setNft({
@@ -95,8 +89,7 @@ const NFT: React.FC<{
 						key={index}
 						style={{ width: sizeImg, height: sizeImg, marginBottom: 30 }}
 						source={{ uri: nft?.uri }}
-						onError={({ nativeEvent: { error } }) => console.warn(error)}
-						onLoad={() => console.log('local image loaded')}
+						onError={({ nativeEvent: { error } }) => console.warn('failed to load image:', error)}
 					/>
 					<Text
 						selectable={true}
@@ -124,14 +117,10 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 	const [ipfsFiles, setIpfsFiles] = React.useState<string[]>([])
 	const winsz = useWindowDimensions()
 
-	const fetchURL = React.useCallback(async (url: string, canceled: boolean) => {
+	const fetchURL = React.useCallback(async (url: string) => {
 		console.log('fetching:', url)
 		let reply = await fetch(url)
-		console.log('fetch:', reply.status)
-		if (canceled) {
-			console.log('fetch canceled')
-			return
-		}
+		//console.log('fetch:', reply.status)
 		if (!(reply.status === 200)) {
 			console.warn('fetch fail')
 			return
@@ -146,8 +135,8 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 		let canceled = false
 		const start = async () => {
 			// fetch ipfs directory
-			const ipfsDirReply = await fetchURL(mobileIPFS.gatewayURL + superlativeRoot, canceled)
-			if (!ipfsDirReply) {
+			const ipfsDirReply = await fetchURL(mobileIPFS.gatewayURL + superlativeRoot)
+			if (!ipfsDirReply || canceled) {
 				return
 			}
 			const usableReply = await ipfsDirReply.text()
