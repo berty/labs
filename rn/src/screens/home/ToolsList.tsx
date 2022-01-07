@@ -108,8 +108,8 @@ export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
 		return searchText
 			? items.filter(
 					item =>
-						item.title.toLowerCase().indexOf(searchText) !== -1 ||
-						item.desc.toLowerCase().indexOf(searchText) !== -1,
+						item.title.toLowerCase().indexOf(searchText) >= 0 ||
+						item.desc.toLowerCase().indexOf(searchText) >= 0,
 			  )
 			: items
 	}, [items, searchText])
