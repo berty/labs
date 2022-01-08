@@ -30,9 +30,9 @@
 		<true/>
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Connect to bluetooth peers</string>
+	<string>Share content with people around you</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Connect to bluetooth peers</string>
+	<string>Share content with people around you</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Find peers on local network</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
