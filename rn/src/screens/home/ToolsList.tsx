@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ViewStyle } from 'react-native'
 
 import { IPFSIcon } from '@berty-labs/assets'
 import { defaultColors } from '@berty-labs/styles'
-import { useNavigation } from '@berty-labs/navigation'
+import { useAppNavigation } from '@berty-labs/navigation'
 
 type ToolItemParams = {
 	title: string
@@ -61,7 +61,7 @@ const utfIconContainerStyle: ViewStyle = {
 }
 
 export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
-	const { navigate } = useNavigation()
+	const { navigate } = useAppNavigation()
 
 	const items = React.useMemo<ToolItemParams[]>(() => {
 		return [
@@ -98,6 +98,16 @@ export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
 				avatar: (
 					<View style={utfIconContainerStyle}>
 						<Text style={utfIconStyle}>🚀</Text>
+					</View>
+				),
+			},
+			{
+				title: 'IPFS Node Manager',
+				desc: 'Configure and select IPFS nodes',
+				onPress: () => navigate('NodeManager'),
+				avatar: (
+					<View style={utfIconContainerStyle}>
+						<Text style={utfIconStyle}>🔧</Text>
 					</View>
 				),
 			},

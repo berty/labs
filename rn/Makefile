@@ -28,7 +28,6 @@ unlink:
 
 node_modules/.fresh: yarn.lock package.json
 	$(MAKE) unlink
-	rm -fr node_modules
 	yarn
 	$(MAKE) .link
 	touch $@

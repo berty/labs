@@ -5,6 +5,7 @@ import { defaultColors } from '@berty-labs/styles'
 
 export type ButtonParams = {
 	title: string
+	shrink?: boolean
 	onPress?: (event: GestureResponderEvent) => void
 } & TouchableOpacity['props']
 
@@ -13,6 +14,7 @@ export const Button: React.FC<ButtonParams> = ({
 	onPress,
 	style,
 	disabled,
+	shrink,
 	...otherProps
 }) => {
 	return (
@@ -20,14 +22,13 @@ export const Button: React.FC<ButtonParams> = ({
 			<TouchableOpacity
 				style={[
 					{
-						width: 200,
+						minWidth: shrink ? undefined : 200,
 						alignItems: 'center',
 						justifyContent: 'center',
 						backgroundColor: disabled ? defaultColors.grey : defaultColors.blue,
 						borderRadius: 6,
 						paddingVertical: 15,
 						paddingHorizontal: 20,
-						marginTop: 30,
 					},
 					style,
 				]}

@@ -4,7 +4,6 @@ import {
 	Text,
 	Image,
 	ActivityIndicator,
-	SafeAreaView,
 	FlatList,
 	Dimensions,
 	useWindowDimensions,
@@ -13,15 +12,25 @@ import {
 import { defaultColors } from '@berty-labs/styles'
 import { useGomobileIPFS } from '@berty-labs/ipfsutil'
 import { ScreenFC } from '@berty-labs/navigation'
+import { AppScreenContainer, Loader } from '@berty-labs/components'
 
 const superlativeRoot = '/ipfs/QmZdUpu5sC2YPKBdocZqYtLyy2DSBD6WLK7STKFQoDgbYW/metadata'
 // const externalGateway = 'https://gateway.pinata.cloud'
 
+const fetchURL = async (url: string, controller: AbortController) => {
+	console.log('fetching:', url)
+	let reply = await fetch(url, { signal: controller.signal })
+	//console.log('fetch:', reply.status)
+	if (!(reply.status === 200)) {
+		throw new Error(`bad http status: ${reply.status}`)
+	}
+	return reply
+}
+
 const NFT: React.FC<{
 	index: number
 	item: string
-	fetchURL: (url: string) => Promise<Awaited<ReturnType<typeof fetch> | undefined>>
-}> = ({ index, item, fetchURL }) => {
+}> = ({ index, item }) => {
 	const mobileIPFS = useGomobileIPFS()
 	const [nft, setNft] = React.useState<{ uri: string; name: string; desc: string }>()
 
@@ -32,34 +41,45 @@ const NFT: React.FC<{
 		if (!mobileIPFS.gatewayURL) {
 			return
 		}
-		let canceled = false
+		const controller = new AbortController()
 		const start = async () => {
-			// fetch ipfs json file
-			const fileReply = await fetchURL(mobileIPFS.gatewayURL + item)
-			if (!fileReply || canceled) {
-				return
+			try {
+				// fetch ipfs json file
+				const fileReply = await fetchURL(mobileIPFS.gatewayURL + item, controller)
+				if (controller.signal.aborted) {
+					throw new Error('abort')
+				}
+				const usableReply = await fileReply.text()
+				if (controller.signal.aborted) {
+					throw new Error('abort')
+				}
+				const parsedUsableReply = JSON.parse(usableReply)
+				const regex = /\/ipfs\/.+?\/image\/[0-9]+.png/g
+				// recup nft image
+				const uriFinal = parsedUsableReply.image.match(regex)
+				// fetch nft image
+				const nftReply = await fetchURL(mobileIPFS.gatewayURL + uriFinal, controller)
+				if (controller.signal.aborted) {
+					throw new Error('abort')
+				}
+				setNft({
+					uri: nftReply.url,
+					name: parsedUsableReply.name,
+					desc: parsedUsableReply.description,
+				})
+			} catch (err: unknown) {
+				if (controller.signal.aborted) {
+					console.log('fetch-nft abort:', item)
+					return
+				}
+				console.warn('fetch-nft error:', err)
 			}
-			const usableReply = await fileReply.text()
-			const parsedUsableReply = JSON.parse(usableReply)
-			const regex = /\/ipfs\/.+?\/image\/[0-9]+.png/g
-			// recup nft image
-			const uriFinal = parsedUsableReply.image.match(regex)
-			// fetch nft image
-			const nftReply = await fetchURL(mobileIPFS.gatewayURL + uriFinal)
-			if (!nftReply || canceled) {
-				return
-			}
-			setNft({
-				uri: nftReply.url,
-				name: parsedUsableReply.name,
-				desc: parsedUsableReply.description,
-			})
 		}
 		start()
 		return () => {
-			canceled = true
+			controller.abort()
 		}
-	}, [fetchURL, item, mobileIPFS.gatewayURL])
+	}, [item, mobileIPFS.gatewayURL])
 
 	return (
 		<View
@@ -106,7 +126,9 @@ const NFT: React.FC<{
 					</Text>
 				</>
 			) : (
-				<ActivityIndicator />
+				<View style={{ height: sizeImg + 100, justifyContent: 'center', alignItems: 'center' }}>
+					<ActivityIndicator />
+				</View>
 			)}
 		</View>
 	)
@@ -117,48 +139,45 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 	const [ipfsFiles, setIpfsFiles] = React.useState<string[]>([])
 	const winsz = useWindowDimensions()
 
-	const fetchURL = React.useCallback(async (url: string) => {
-		console.log('fetching:', url)
-		let reply = await fetch(url)
-		//console.log('fetch:', reply.status)
-		if (!(reply.status === 200)) {
-			console.warn('fetch fail')
-			return
-		}
-		return reply
-	}, [])
-
 	React.useEffect(() => {
 		if (!mobileIPFS.gatewayURL) {
 			return
 		}
-		let canceled = false
+		const controller = new AbortController()
 		const start = async () => {
-			// fetch ipfs directory
-			const ipfsDirReply = await fetchURL(mobileIPFS.gatewayURL + superlativeRoot)
-			if (!ipfsDirReply || canceled) {
-				return
+			try {
+				// fetch ipfs directory
+				const ipfsDirReply = await fetchURL(mobileIPFS.gatewayURL + superlativeRoot, controller)
+				if (controller.signal.aborted) {
+					throw new Error('abort')
+				}
+				const usableReply = await ipfsDirReply.text()
+				if (controller.signal.aborted) {
+					throw new Error('abort')
+				}
+				const regex = /\/ipfs\/.+?\/metadata\/[0-9]+/g
+				// recup ipfs json files
+				const files = usableReply.match(regex)
+				if (!files) {
+					return
+				}
+				setIpfsFiles(files)
+			} catch (err: unknown) {
+				if (controller.signal.aborted) {
+					console.log('fetch-nft-list abort')
+					return
+				}
+				console.warn('fetch-nft-list error:', err)
 			}
-			const usableReply = await ipfsDirReply.text()
-			const regex = /\/ipfs\/.+?\/metadata\/[0-9]+/g
-			// recup ipfs json files
-			const files = usableReply.match(regex)
-			if (!files) {
-				return
-			}
-			if (canceled) {
-				return
-			}
-			setIpfsFiles(files)
 		}
 		start()
 		return () => {
-			canceled = true
+			controller.abort()
 		}
-	}, [fetchURL, mobileIPFS.gatewayURL])
+	}, [mobileIPFS.gatewayURL])
 
 	return (
-		<SafeAreaView style={{ backgroundColor: defaultColors.background, flex: 1 }}>
+		<AppScreenContainer>
 			<FlatList
 				showsVerticalScrollIndicator={false}
 				style={{ alignContent: 'center', marginTop: 20 }}
@@ -183,29 +202,13 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 								REKT
 							</Text>
 						</View>
-
-						<View
-							style={{
-								alignItems: 'center',
-								justifyContent: 'center',
-								width: winsz.width,
-							}}
-						>
-							{!ipfsFiles.length && (
-								<>
-									<Text style={{ color: defaultColors.white, opacity: 0.7, marginBottom: 30 }}>
-										Loading NFT list from IPFS...
-									</Text>
-									<ActivityIndicator />
-								</>
-							)}
-						</View>
+						{!ipfsFiles.length && <Loader text='Loading NFT list from IPFS...' />}
 					</View>
 				)}
 				contentContainerStyle={{ alignItems: 'flex-start' }}
 				data={ipfsFiles}
-				renderItem={({ item, index }) => <NFT item={item} index={index} fetchURL={fetchURL} />}
+				renderItem={({ item, index }) => <NFT item={item} index={index} />}
 			/>
-		</SafeAreaView>
+		</AppScreenContainer>
 	)
 }

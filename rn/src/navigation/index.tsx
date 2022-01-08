@@ -9,17 +9,25 @@ import {
 	NavigationProp,
 } from '@react-navigation/native'
 
-import { ServicesHealth, GatewaysRace, NftCollection, OnBoarding, Home } from '@berty-labs/screens'
+import {
+	ServicesHealth,
+	GatewaysRace,
+	NftCollection,
+	OnBoarding,
+	Home,
+	NodeManager,
+	IPFSWebUI,
+	NodeConfig,
+} from '@berty-labs/screens'
 import { defaultColors } from '@berty-labs/styles'
 
 import { ScreensParams } from './types'
-import { IPFSWebUI } from '@berty-labs/screens/IPFSWebUI'
 
 export type { ScreensParams, ScreenProps, ScreenFC } from './types'
 
 export const isReadyRef: React.MutableRefObject<any> = React.createRef()
 export const navigationRef = React.createRef<NavigationContainerRef<ScreensParams>>()
-export const useNavigation = () => useReactNavigation<NavigationProp<ScreensParams>>()
+export const useAppNavigation = () => useReactNavigation<NavigationProp<ScreensParams>>()
 
 const screenOptions: NativeStackNavigationOptions = {
 	headerStyle: {
@@ -64,6 +72,16 @@ export const Navigation: React.FC = React.memo(() => {
 				name={'IPFSWebUI'}
 				component={IPFSWebUI}
 				options={{ ...screenOptions, title: 'IPFS WebUI' }}
+			/>
+			<NavigationStack.Screen
+				name={'NodeManager'}
+				component={NodeManager}
+				options={{ ...screenOptions, title: 'IPFS Node Manager' }}
+			/>
+			<NavigationStack.Screen
+				name={'NodeConfig'}
+				component={NodeConfig}
+				options={{ ...screenOptions, title: 'Node Configuration' }}
 			/>
 		</NavigationStack.Navigator>
 	)

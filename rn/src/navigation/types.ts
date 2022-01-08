@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 export type ScreensParams = {
 	OnBoarding: undefined
@@ -9,8 +9,10 @@ export type ScreensParams = {
 	ServicesHealth: undefined
 	GatewaysRace: undefined
 	NftCollection: undefined
+	NodeManager: undefined
+	NodeConfig: { name: string }
 }
 
-export type ScreenProps<T extends keyof ScreensParams> = StackScreenProps<ScreensParams, T>
+export type ScreenProps<T extends keyof ScreensParams> = NativeStackScreenProps<ScreensParams, T>
 
 export type ScreenFC<T extends keyof ScreensParams> = React.FC<ScreenProps<T>>

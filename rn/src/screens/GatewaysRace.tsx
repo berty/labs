@@ -1,7 +1,6 @@
 import React from 'react'
 import {
 	ImageStyle,
-	SafeAreaView,
 	ScrollView,
 	ViewStyle,
 	View,
@@ -13,6 +12,8 @@ import {
 import { ScreenFC } from '@berty-labs/navigation'
 import { defaultColors } from '@berty-labs/styles'
 import { useGomobileIPFS } from '@berty-labs/ipfsutil'
+import { AppScreenContainer } from '@berty-labs/components'
+import { prettyMilliSeconds } from '@berty-labs/reactutil'
 
 // const superlativeApesRoot = "/ipfs/QmbYCLEdnez33AnjigGAhM3ouNj8LMTXBwUqVLaLnUvBbU"
 const superlativeApe = '/ipfs/QmQVS8VrY9FFpUWKitGhFzzx3xGixAd4frf1Czr7AQxeTc/1.png'
@@ -25,16 +26,6 @@ const style: ViewStyle & ImageStyle = {
 	justifyContent: 'center',
 }
 
-const prettyMilliSeconds = (ms: number) => {
-	if (ms >= 60000) {
-		return `${(ms / 60000).toFixed(0)}min ${((ms % 60000) / 1000).toFixed(0)}sec`
-	}
-	if (ms >= 1000) {
-		return `${(ms / 1000).toFixed(2)}sec`
-	}
-	return `${ms}ms`
-}
-
 const textStyle = {
 	color: defaultColors.white,
 	fontSize: 18,
@@ -43,27 +34,26 @@ const textStyle = {
 export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
 	const init = React.useRef(Date.now())
 
+	const mobileIPFS = useGomobileIPFS()
 	const [loadedLocal, setLoadedLocal] = React.useState<number>()
 	const [localError, setLocalError] = React.useState<Error>()
+	const [imageURI, setImageURI] = React.useState<string>()
 
 	const [loadedExternal, setLoadedExternal] = React.useState<number>()
 	const [externalError, setExternalError] = React.useState<Error>()
 
-	const mobileIPFS = useGomobileIPFS()
-	const [imageURI, setImageURI] = React.useState<string>()
 	React.useEffect(() => {
 		if (!mobileIPFS.gatewayURL) {
 			return
 		}
-		let canceled = false
+		const controller = new AbortController()
 		const start = async () => {
 			const url = mobileIPFS.gatewayURL + superlativeApe
 			try {
 				console.log('pre-fetching:', url)
-				const reply = await fetch(url)
-				if (canceled) {
-					console.log('pre-fetch canceled:', url)
-					return
+				const reply = await fetch(url, { signal: controller.signal })
+				if (controller.signal.aborted) {
+					throw new Error('abort')
 				}
 				if (!(reply.status === 200)) {
 					setLoadedLocal(Date.now())
@@ -74,6 +64,10 @@ export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
 				console.log('pre-fetched:', url)
 				setImageURI(url)
 			} catch (err: unknown) {
+				if (controller.signal.aborted) {
+					console.log('pre-fetch abort:', url)
+					return
+				}
 				console.warn(`pre-fetch: ${err}: ${url}`)
 				setLoadedLocal(Date.now())
 				setLocalError(err instanceof Error ? err : new Error(`${err}`))
@@ -81,7 +75,7 @@ export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
 		}
 		start()
 		return () => {
-			canceled = true
+			controller.abort()
 		}
 	}, [mobileIPFS.gatewayURL])
 
@@ -90,7 +84,7 @@ export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
 	}
 
 	return (
-		<SafeAreaView style={{ backgroundColor: defaultColors.background, flex: 1 }}>
+		<AppScreenContainer>
 			<ScrollView>
 				<View style={{ marginVertical: 30 }}>
 					<View style={{ alignItems: 'center', paddingHorizontal: 30 }}>
@@ -149,6 +143,6 @@ export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
 					</View>
 				</View>
 			</ScrollView>
-		</SafeAreaView>
+		</AppScreenContainer>
 	)
 }
