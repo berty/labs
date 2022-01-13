@@ -27,4 +27,4 @@ jobs:
         run: yarn
       - name: Lint
         working-directory: rn
-        run: yarn lint
+        run: make lint

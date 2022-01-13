@@ -11,9 +11,9 @@ import {
 
 import { ScreenFC } from '@berty-labs/navigation'
 import { defaultColors } from '@berty-labs/styles'
-import { useGomobileIPFS } from '@berty-labs/ipfsutil'
+import { useGomobileIPFS } from '@berty-labs/react-redux'
 import { AppScreenContainer } from '@berty-labs/components'
-import { prettyMilliSeconds } from '@berty-labs/reactutil'
+import { prettyMilliSeconds, useAsyncEffect } from '@berty-labs/reactutil'
 
 // const superlativeApesRoot = "/ipfs/QmbYCLEdnez33AnjigGAhM3ouNj8LMTXBwUqVLaLnUvBbU"
 const superlativeApe = '/ipfs/QmQVS8VrY9FFpUWKitGhFzzx3xGixAd4frf1Czr7AQxeTc/1.png'
@@ -42,12 +42,11 @@ export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
 	const [loadedExternal, setLoadedExternal] = React.useState<number>()
 	const [externalError, setExternalError] = React.useState<Error>()
 
-	React.useEffect(() => {
-		if (!mobileIPFS.gatewayURL) {
-			return
-		}
-		const controller = new AbortController()
-		const start = async () => {
+	useAsyncEffect(
+		async controller => {
+			if (!mobileIPFS.gatewayURL) {
+				return
+			}
 			const url = mobileIPFS.gatewayURL + superlativeApe
 			try {
 				console.log('pre-fetching:', url)
@@ -72,15 +71,12 @@ export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
 				setLoadedLocal(Date.now())
 				setLocalError(err instanceof Error ? err : new Error(`${err}`))
 			}
-		}
-		start()
-		return () => {
-			controller.abort()
-		}
-	}, [mobileIPFS.gatewayURL])
+		},
+		[mobileIPFS.gatewayURL],
+	)
 
-	if (mobileIPFS.state !== 'up') {
-		return <Text style={textStyle}>IPFS: {mobileIPFS.state}</Text>
+	if (mobileIPFS.status !== 'up') {
+		return <Text style={textStyle}>IPFS: {mobileIPFS.status}</Text>
 	}
 
 	return (

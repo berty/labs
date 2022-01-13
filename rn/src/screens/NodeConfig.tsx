@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ScrollView, Share, Text, TouchableOpacity, View, ViewStyle } from 'react-native'
 import * as FileSystem from 'expo-file-system'
 
@@ -9,12 +9,18 @@ import {
 	IPFSConfig,
 	ipfsConfigPath,
 	ipfsRepoPath,
-	useGomobileIPFS,
 } from '@berty-labs/ipfsutil'
-import { AppScreenContainer, Button, Card, IPFSServicesHealth } from '@berty-labs/components'
+import {
+	AppScreenContainer,
+	Button,
+	Card,
+	IPFSServicesHealth,
+	UseIPFSNodeButton,
+} from '@berty-labs/components'
 import { defaultColors } from '@berty-labs/styles'
 import { prettyBytes, useMountEffect } from '@berty-labs/reactutil'
 import { usePathSize } from '@berty-labs/expoutil'
+import { useGomobileIPFS } from '@berty-labs/react-redux'
 
 const textStyle = { color: defaultColors.white, opacity: 0.7 }
 
@@ -49,7 +55,6 @@ export const NodeConfig: ScreenFC<'NodeConfig'> = ({
 	route: {
 		params: { name },
 	},
-	navigation: { goBack },
 }) => {
 	const mobileIPFS = useGomobileIPFS()
 	const [rootSpec, setRootSpec] = React.useState<AnySpec>()
@@ -94,7 +99,7 @@ export const NodeConfig: ScreenFC<'NodeConfig'> = ({
 								spec = mount.child
 							}
 							setRootSpec(spec)
-							console.log('root', mount)
+							//console.log('root', mount)
 						}
 						if (mount.mountpoint === '/blocks') {
 							let spec: AnySpec = mount
@@ -102,7 +107,7 @@ export const NodeConfig: ScreenFC<'NodeConfig'> = ({
 								spec = mount.child
 							}
 							setBlocksSpec(spec)
-							console.log('blocks', mount)
+							//console.log('blocks', mount)
 						}
 					}
 					break
@@ -110,6 +115,12 @@ export const NodeConfig: ScreenFC<'NodeConfig'> = ({
 		},
 		[name],
 	)
+
+	useEffect(() => {
+		const ac = new AbortController()
+		refresh(ac)
+		return () => ac.abort()
+	}, [refresh, mobileIPFS.status])
 
 	useMountEffect(() => {
 		const controller = new AbortController()
@@ -123,22 +134,9 @@ export const NodeConfig: ScreenFC<'NodeConfig'> = ({
 		}
 	})
 
-	const isInUse = mobileIPFS.name === name
+	const isInUse = mobileIPFS.nodeName === name
 
-	const useNodeButton = (
-		<Button
-			disabled={isInUse || mobileIPFS.state !== 'up'}
-			style={{ marginLeft: space }}
-			title={isInUse ? 'In use' : 'Use'}
-			shrink
-			onPress={() => {
-				if (mobileIPFS.state !== 'up') {
-					return
-				}
-				mobileIPFS.switchToNode(name)
-			}}
-		/>
-	)
+	const useNodeButton = <UseIPFSNodeButton nodeName={name} style={{ marginLeft: space }} />
 
 	return (
 		<AppScreenContainer>
@@ -228,20 +226,6 @@ export const NodeConfig: ScreenFC<'NodeConfig'> = ({
 								</>
 							)}
 						</>
-					)}
-					{!isInUse && mobileIPFS.state === 'up' && (
-						<Button
-							title='Delete'
-							style={{ marginBottom: space }}
-							shrink
-							onPress={() => {
-								const start = async () => {
-									await FileSystem.deleteAsync(ipfsRepoPath(name))
-									goBack()
-								}
-								start()
-							}}
-						/>
 					)}
 				</View>
 			</ScrollView>

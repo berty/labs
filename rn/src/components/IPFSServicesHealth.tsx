@@ -3,7 +3,7 @@ import { Text, ViewStyle } from 'react-native'
 
 import { defaultColors } from '@berty-labs/styles'
 import { prettyMilliSeconds, useMountEffect } from '@berty-labs/reactutil'
-import { useGomobileIPFS } from '@berty-labs/ipfsutil'
+import { useGomobileIPFS } from '@berty-labs/react-redux'
 import { PressableCard } from '@berty-labs/components'
 
 type ServiceStatus =

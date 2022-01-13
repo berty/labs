@@ -26,7 +26,7 @@ unlink:
 	rm -f .link
 
 
-node_modules/.fresh: yarn.lock package.json
+node_modules/.fresh: yarn.lock package.json $(wildcard patches/%)
 	$(MAKE) unlink
 	yarn
 	$(MAKE) .link
@@ -62,10 +62,12 @@ android: node_modules/.fresh
 .PHONY: lint
 lint: node_modules/.fresh
 	yarn lint
+	npx tsc
 
 .PHONY: lint.fix
 lint.fix: node_modules/.fresh
 	yarn lint --fix
+	npx tsc
 
 #### React-Native
 
