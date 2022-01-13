@@ -9,6 +9,7 @@ export type ScreensParams = {
 	ServicesHealth: undefined
 	GatewaysRace: undefined
 	NftCollection: undefined
+	UploadFile: undefined
 }
 
 export type ScreenProps<T extends keyof ScreensParams> = StackScreenProps<ScreensParams, T>

@@ -101,6 +101,16 @@ export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
 					</View>
 				),
 			},
+			{
+				title: 'Upload file',
+				desc: 'Upload a file on IPFS',
+				onPress: () => navigate('UploadFile'),
+				avatar: (
+					<View style={utfIconContainerStyle}>
+						<Text style={utfIconStyle}>😎</Text>
+					</View>
+				),
+			},
 		]
 	}, [navigate])
 

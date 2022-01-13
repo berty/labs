@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { IPFS } from 'react-native-gomobile-ipfs'
+import { create, IPFSHTTPClient } from 'ipfs-http-client'
 
 import { useMountEffect } from '@berty-labs/reactutil'
 
@@ -112,4 +113,41 @@ export const GomobileIPFSProvider: React.FC = ({ children }) => {
 
 export const useGomobileIPFS = () => {
 	return useContext(GomobileIPFSContext)
+}
+
+// IPFSHTTPClient
+
+export type IPFSHTTPClientState = {
+	client?: IPFSHTTPClient
+}
+
+const IPFSHTTPClientContext = React.createContext<IPFSHTTPClientState>({})
+
+export const useIPFSHTTP = () => {
+	const [state, setState] = React.useState<IPFSHTTPClientState>({})
+
+	useMountEffect(() => {
+		let canceled = false
+		let clean = async () => {}
+		const start = () => {
+			const client = create({ url: 'http://127.0.0.1:5001', apiPath: 'api/v0' })
+			if (canceled) {
+				clean()
+				return
+			}
+			setState({ client })
+		}
+		start()
+		return () => {
+			canceled = true
+			clean()
+		}
+	})
+
+	return state
+}
+
+export const IPFSHttpClientProvider: React.FC = ({ children }) => {
+	const state = useIPFSHTTP()
+	return <IPFSHTTPClientContext.Provider value={state}>{children}</IPFSHTTPClientContext.Provider>
 }

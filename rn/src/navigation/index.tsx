@@ -9,7 +9,14 @@ import {
 	NavigationProp,
 } from '@react-navigation/native'
 
-import { ServicesHealth, GatewaysRace, NftCollection, OnBoarding, Home } from '@berty-labs/screens'
+import {
+	ServicesHealth,
+	GatewaysRace,
+	NftCollection,
+	OnBoarding,
+	Home,
+	UploadFile,
+} from '@berty-labs/screens'
 import { defaultColors } from '@berty-labs/styles'
 
 import { ScreensParams } from './types'
@@ -64,6 +71,11 @@ export const Navigation: React.FC = React.memo(() => {
 				name={'IPFSWebUI'}
 				component={IPFSWebUI}
 				options={{ ...screenOptions, title: 'IPFS WebUI' }}
+			/>
+			<NavigationStack.Screen
+				name={'UploadFile'}
+				component={UploadFile}
+				options={{ ...screenOptions, title: 'Upload file' }}
 			/>
 		</NavigationStack.Navigator>
 	)
