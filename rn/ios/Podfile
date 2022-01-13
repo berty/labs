@@ -1,12 +1,14 @@
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '11.0'
+platform :ios, '12.0'
 
 target 'BertyLabs' do
   pod 'Gomobile-IPFS-Bridge', :podspec => "./vendored_pods/Gomobile-IPFS-Bridge.podspec"
   pod 'Gomobile-IPFS-Core', :podspec => "./vendored_pods/Gomobile-IPFS-Core.podspec"
 
+  use_expo_modules!
   config = use_native_modules!
 
   use_react_native!(
