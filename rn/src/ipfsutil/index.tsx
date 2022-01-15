@@ -1,2 +1,2 @@
-export * from './expo-gomobile-ipfs'
+export * from './ipfsFileSystem'
 export * from './config'

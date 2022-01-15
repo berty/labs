@@ -1,6 +1,7 @@
 import React from 'react'
 
 export * from './randomName'
+export * from './useAsync'
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
 export const useMountEffect = (effect: React.EffectCallback) => React.useEffect(effect, [])

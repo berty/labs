@@ -1,15 +1,21 @@
 import React from 'react'
 import { ActivityIndicator, FlatList, Text, TextInput, TextStyle, View } from 'react-native'
 import * as FileSystem from 'expo-file-system'
+import { useFocusEffect } from '@react-navigation/native'
 
 import { ScreenFC, useAppNavigation } from '@berty-labs/navigation'
-import { AppScreenContainer, Button, Card, LoaderScreen } from '@berty-labs/components'
-import { prettyBytes, useUnmountRef } from '@berty-labs/reactutil'
+import {
+	AppScreenContainer,
+	Button,
+	Card,
+	LoaderScreen,
+	UseIPFSNodeButton,
+} from '@berty-labs/components'
+import { prettyBytes, useUnmountRef, randomCarretName } from '@berty-labs/reactutil'
 import { defaultColors } from '@berty-labs/styles'
-import { ipfsRepoPath, useGomobileIPFS } from '@berty-labs/ipfsutil'
-import { useFocusEffect } from '@react-navigation/native'
+import { ipfsRepoPath } from '@berty-labs/ipfsutil'
 import { usePathSize } from '@berty-labs/expoutil'
-import { randomCarretName } from '@berty-labs/reactutil'
+import { useGomobileIPFS } from '@berty-labs/react-redux'
 
 type RepoInfo = {
 	name: string
@@ -27,6 +33,7 @@ const titleStyle: TextStyle = {
 	marginTop: 30,
 	marginBottom: 15,
 }
+
 const NodeItem: React.FC<{
 	item: RepoInfo
 	refresh: (controller: AbortController) => Promise<void>
@@ -34,33 +41,23 @@ const NodeItem: React.FC<{
 	const { navigate } = useAppNavigation()
 	const mobileIPFS = useGomobileIPFS()
 	const size = usePathSize(ipfsRepoPath(item.name))
-	const isInUse = mobileIPFS.name === item.name
+	const isInUse = mobileIPFS.nodeName === item.name
 	return (
 		<Card style={{ marginTop: space }} title={item.name}>
 			<Text style={[textStyle, { marginBottom: space }]}>Size: {prettyBytes(size)}</Text>
 			<View style={{ flexDirection: 'row' }}>
-				{!isInUse && (
-					<Button
-						title='Use'
-						shrink
-						disabled={mobileIPFS.state !== 'up'}
-						style={{ marginRight: space }}
-						onPress={() => {
-							if (mobileIPFS.state !== 'up') {
-								return
-							}
-							mobileIPFS.switchToNode(item.name)
-							navigate('NodeConfig', { name: item.name })
-						}}
-					/>
-				)}
+				<UseIPFSNodeButton
+					nodeName={item.name}
+					style={{ marginRight: space }}
+					onUse={() => navigate('NodeConfig', { name: item.name })}
+				/>
 				<Button
 					title='More'
 					shrink
 					onPress={() => navigate('NodeConfig', { name: item.name })}
 					style={{ marginRight: space }}
 				/>
-				{!isInUse && mobileIPFS.state === 'up' && (
+				{!isInUse && (
 					<Button
 						title='Delete'
 						shrink
@@ -111,7 +108,7 @@ export const NodeManager: ScreenFC<'NodeManager'> = ({ navigation: { navigate } 
 		return () => controller.abort()
 	})
 	const mobileIpfs = useGomobileIPFS()
-	const selected = repoInfo?.find(r => r.name === mobileIpfs.name)
+	const selected = repoInfo?.find(r => r.name === mobileIpfs.nodeName || mobileIpfs.nextNodeName)
 	const selectable = (
 		selected ? repoInfo?.filter(r => keyExtractor(r) !== keyExtractor(selected)) : repoInfo
 	)?.sort((a, b) => (b?.modificationTime || 0) - (a?.modificationTime || 0))
