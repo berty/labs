@@ -66,6 +66,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = BertyLabs/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9471DEA0278471C800186ED2 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		9471DEA2278471D100186ED2 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
+		94B078272798151300B35B97 /* BertyLabs.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BertyLabs.entitlements; path = BertyLabs/BertyLabs.entitlements; sourceTree = "<group>"; };
 		ABFE59519B596E51CEFDCCC0 /* libPods-BertyLabs-BertyLabsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BertyLabs-BertyLabsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0A881CF5CF3F2B244570E2A /* Pods-BertyLabs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BertyLabs.debug.xcconfig"; path = "Target Support Files/Pods-BertyLabs/Pods-BertyLabs.debug.xcconfig"; sourceTree = "<group>"; };
 		CC222A8922B8F2BEA33D3877 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-BertyLabs-BertyLabsTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
@@ -124,6 +125,7 @@
 		13B07FAE1A68108700A75B9A /* BertyLabs */ = {
 			isa = PBXGroup;
 			children = (
+				94B078272798151300B35B97 /* BertyLabs.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -571,8 +573,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = BertyLabs/BertyLabs.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = BD3SV5P3NX;
+				DEVELOPMENT_TEAM = WMBQ84HN4T;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = BertyLabs/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -599,6 +602,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = BertyLabs/BertyLabs.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WMBQ84HN4T;
 				INFOPLIST_FILE = BertyLabs/Info.plist;
