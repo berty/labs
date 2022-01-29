@@ -38,8 +38,18 @@ ios/vendor/bundle: ios/Gemfile ios/Gemfile.lock
 	cd ios && bundle install
 	touch $@
 
-ios/Pods/.fresh: ios/Podfile ios/Podfile.lock node_modules/.fresh ios/vendor/bundle $(wildcard ios/vendored_pods/%)
+ios/vendored_pods/Gomobile-IPFS-Core.podspec: react-native-gomobile-ipfs/gomobile-ipfs.version
+	mkdir -p ios/vendored_pods
+	curl -Lo $@ 'https://github.com/ipfs-shipyard/gomobile-ipfs/releases/download/v${shell cat react-native-gomobile-ipfs/gomobile-ipfs.version}/Gomobile-IPFS-Core.podspec'
+
+ios/vendored_pods/Gomobile-IPFS-Bridge.podspec: react-native-gomobile-ipfs/gomobile-ipfs.version
+	mkdir -p ios/vendored_pods
+	curl -Lo $@ 'https://github.com/ipfs-shipyard/gomobile-ipfs/releases/download/v${shell cat react-native-gomobile-ipfs/gomobile-ipfs.version}/Gomobile-IPFS-Bridge.podspec'
+
+ios/Pods/.fresh: ios/Podfile ios/Podfile.lock node_modules/.fresh ios/vendor/bundle ios/vendored_pods/Gomobile-IPFS-Core.podspec ios/vendored_pods/Gomobile-IPFS-Bridge.podspec
 	rm -fr ios/Pods
+	perl -i -pe "s/s\.dependency 'Gomobile-IPFS-Bridge', '~> .+'/s\.dependency 'Gomobile-IPFS-Bridge', '~> ${shell cat react-native-gomobile-ipfs/gomobile-ipfs.version}'/" react-native-gomobile-ipfs/react-native-gomobile-ipfs.podspec
+	cd ios && bundle exec pod update Gomobile-IPFS-Core Gomobile-IPFS-Bridge --no-repo-update
 	cd ios && bundle exec pod install --repo-update
 	touch $@
 

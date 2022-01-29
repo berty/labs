@@ -16,6 +16,6 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency "React"
-  s.dependency 'Gomobile-IPFS-Bridge', '~> 1.1.4'
+  s.dependency 'Gomobile-IPFS-Bridge', '~> 1.5.0'
 end
 
