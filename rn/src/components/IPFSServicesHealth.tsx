@@ -47,6 +47,8 @@ const PingCard: React.FC<{ style?: ViewStyle; name: string; address?: string }> 
 	name,
 	address,
 }) => {
+	const ac = React.useRef<AbortController>()
+
 	const [state, setState] = React.useState<ServiceStatus>({
 		state: 'init',
 	})
@@ -57,18 +59,27 @@ const PingCard: React.FC<{ style?: ViewStyle; name: string; address?: string }> 
 				return
 			}
 			const startDate = Date.now()
+			if (ac.current?.signal.aborted) {
+				return
+			}
 			setState({
 				state: 'querying',
 			})
 			try {
 				const reply = await fetch(address)
 				console.log(name, 'ping status:', reply.status)
+				if (ac.current?.signal.aborted) {
+					return
+				}
 				setState({
 					state: 'up',
 					time: Date.now() - startDate,
 				})
 			} catch (err: unknown) {
 				console.log('ping error:', err)
+				if (ac.current?.signal.aborted) {
+					return
+				}
 				setState({
 					state: 'dead',
 					deadDetails: `${err}`,
@@ -79,7 +90,11 @@ const PingCard: React.FC<{ style?: ViewStyle; name: string; address?: string }> 
 		start()
 	}, [address, name])
 
-	useMountEffect(refresh)
+	useMountEffect(() => {
+		ac.current = new AbortController()
+		refresh()
+		return () => ac.current?.abort()
+	})
 
 	return (
 		<PressableCard style={style} title={name} onPress={refresh}>
