@@ -41,5 +41,3 @@ local.properties
 buck-out/
 \.buckd/
 *.keystore
-
-ios/vendored_pods

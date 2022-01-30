@@ -71,3 +71,4 @@ android/app/gradlew.bat
 /.link
 /ios/vendor/
 /gomobile-ipfs/
+/ios/vendored_pods/

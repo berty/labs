@@ -41,7 +41,7 @@ const NodeItem: React.FC<{
 	const { navigate } = useAppNavigation()
 	const mobileIPFS = useGomobileIPFS()
 	const size = usePathSize(ipfsRepoPath(item.name))
-	const isInUse = mobileIPFS.nodeName === item.name
+	const isInUse = mobileIPFS.nodeName === item.name || mobileIPFS.nextNodeName === item.name
 	return (
 		<Card style={{ marginTop: space }} title={item.name}>
 			<Text style={[textStyle, { marginBottom: space }]}>Size: {prettyBytes(size)}</Text>
@@ -108,7 +108,9 @@ export const NodeManager: ScreenFC<'NodeManager'> = ({ navigation: { navigate } 
 		return () => controller.abort()
 	})
 	const mobileIpfs = useGomobileIPFS()
-	const selected = repoInfo?.find(r => r.name === mobileIpfs.nodeName || mobileIpfs.nextNodeName)
+	const selected =
+		repoInfo?.find(r => r.name === mobileIpfs.nodeName) ||
+		repoInfo?.find(r => r.name === mobileIpfs.nextNodeName)
 	const selectable = (
 		selected ? repoInfo?.filter(r => keyExtractor(r) !== keyExtractor(selected)) : repoInfo
 	)?.sort((a, b) => (b?.modificationTime || 0) - (a?.modificationTime || 0))

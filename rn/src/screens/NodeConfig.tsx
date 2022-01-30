@@ -134,7 +134,7 @@ export const NodeConfig: ScreenFC<'NodeConfig'> = ({
 		}
 	})
 
-	const isInUse = mobileIPFS.nodeName === name
+	const isInUse = mobileIPFS.status === 'up' && mobileIPFS.nodeName === name
 
 	const useNodeButton = <UseIPFSNodeButton nodeName={name} style={{ marginLeft: space }} />
 
