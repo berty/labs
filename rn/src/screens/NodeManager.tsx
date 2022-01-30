@@ -41,7 +41,7 @@ const NodeItem: React.FC<{
 	const { navigate } = useAppNavigation()
 	const mobileIPFS = useGomobileIPFS()
 	const size = usePathSize(ipfsRepoPath(item.name))
-	const isInUse = mobileIPFS.nodeName === item.name
+	const isInUse = mobileIPFS.nodeName === item.name || mobileIPFS.nextNodeName === item.name
 	return (
 		<Card style={{ marginTop: space }} title={item.name}>
 			<Text style={[textStyle, { marginBottom: space }]}>Size: {prettyBytes(size)}</Text>
