@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { defaultColors } from '@berty-labs/styles'
 import { useGomobileIPFS } from '@berty-labs/react-redux'
 import { ScreenFC } from '@berty-labs/navigation'
-import { AppScreenContainer, Loader } from '@berty-labs/components'
+import { AppScreenContainer, Loader, LoaderScreen } from '@berty-labs/components'
 import { useAsyncTransform } from '@berty-labs/reactutil'
 
 const rektCollectionRoot = '/ipfs/QmZdUpu5sC2YPKBdocZqYtLyy2DSBD6WLK7STKFQoDgbYW/metadata'
@@ -45,6 +45,9 @@ const NFT: React.FC<{
 	const [nft] = useAsyncTransform(
 		async controller => {
 			try {
+				if (!mobileIPFS.gatewayURL) {
+					return
+				}
 				// fetch ipfs json file
 				const fileReply = await fetchURL(mobileIPFS.gatewayURL + item, controller)
 				if (controller.signal.aborted) {
@@ -78,6 +81,10 @@ const NFT: React.FC<{
 		},
 		[item, mobileIPFS.gatewayURL],
 	)
+
+	if (!mobileIPFS.gatewayURL) {
+		return <LoaderScreen text='Waiting for IPFS node...' />
+	}
 
 	return (
 		<View
@@ -138,6 +145,9 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 
 	const [ipfsFiles] = useAsyncTransform(
 		async (ac: AbortController) => {
+			if (!mobileIPFS.gatewayURL) {
+				return
+			}
 			// fetch ipfs directory
 			const ipfsDirReply = await fetchURL(mobileIPFS.gatewayURL + rektCollectionRoot, ac)
 			if (ac.signal.aborted) {

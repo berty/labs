@@ -1,0 +1,17 @@
+version: v1
+plugins:
+  - name: go
+    out: .
+    opt:
+      - module=berty.tech/labs
+  - name: go-grpc
+    out: .
+    opt:
+      - module=berty.tech/labs
+  - name: ts
+    out: rn/src/api
+    strategy: all
+    path: rn/node_modules/ts-proto/protoc-gen-ts_proto
+    opt:
+      - esModuleInterop=true
+      - outputClientImpl=grpc-web

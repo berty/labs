@@ -1,0 +1,35 @@
+name: Protobuf
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "^1.17.6"
+
+      - name: Install grpc plugins
+        run: go install google.golang.org/protobuf/cmd/protoc-gen-go google.golang.org/grpc/cmd/protoc-gen-go-grpc
+
+      - name: Setup buf
+        uses: Wizhi/setup-buf@v1
+        with:
+          version: 1.0.0-rc11
+
+      - name: Lint
+        run: buf lint api
+
+      - name: Regenerate
+        run: make regen
+
+      - name: Check that there is no diff
+        run: if [[ $(git diff --text 2>&1 | tee $RUNNER_TEMP/berty-labs-pb.diff) ]]; then cat $RUNNER_TEMP/berty-labs-pb.diff && false; fi

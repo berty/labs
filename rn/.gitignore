@@ -72,3 +72,4 @@ android/app/gradlew.bat
 /ios/vendor/
 /gomobile-ipfs/
 /ios/vendored_pods/
+/react-native-labs-bridge/ios/Labsbridge.xcframework

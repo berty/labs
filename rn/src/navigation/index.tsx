@@ -18,10 +18,13 @@ import {
 	NodeManager,
 	IPFSWebUI,
 	NodeConfig,
+	GoModule,
 } from '@berty-labs/screens'
 import { defaultColors } from '@berty-labs/styles'
 
 import { ScreensParams } from './types'
+import { useAppSelector } from '@berty-labs/react-redux'
+import { selectOnboarded } from '@berty-labs/redux'
 
 export type { ScreensParams, ScreenProps, ScreenFC } from './types'
 
@@ -45,8 +48,10 @@ const screenOptions: NativeStackNavigationOptions = {
 
 const NavigationStack = createNativeStackNavigator<ScreensParams>()
 export const Navigation: React.FC = React.memo(() => {
+	const onboarded = useAppSelector(selectOnboarded)
+	console.log('onboarded:', onboarded)
 	return (
-		<NavigationStack.Navigator initialRouteName='OnBoarding'>
+		<NavigationStack.Navigator initialRouteName={onboarded ? 'Home' : 'OnBoarding'}>
 			<NavigationStack.Screen name={'Home'} component={Home} options={{ headerShown: false }} />
 			<NavigationStack.Screen
 				name={'OnBoarding'}
@@ -71,7 +76,7 @@ export const Navigation: React.FC = React.memo(() => {
 			<NavigationStack.Screen
 				name={'IPFSWebUI'}
 				component={IPFSWebUI}
-				options={{ ...screenOptions, title: 'IPFS WebUI' }}
+				options={{ ...screenOptions, title: 'IPFS Web Interface' }}
 			/>
 			<NavigationStack.Screen
 				name={'NodeManager'}
@@ -82,6 +87,11 @@ export const Navigation: React.FC = React.memo(() => {
 				name={'NodeConfig'}
 				component={NodeConfig}
 				options={{ ...screenOptions, title: 'Node Configuration' }}
+			/>
+			<NavigationStack.Screen
+				name={'GoModule'}
+				component={GoModule}
+				options={{ ...screenOptions, title: 'Go Module' }}
 			/>
 		</NavigationStack.Navigator>
 	)

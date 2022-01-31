@@ -1,20 +1,18 @@
 import React from 'react'
-import { TouchableOpacity, TouchableOpacityProps, Text, View, ViewProps } from 'react-native'
+import {
+	TouchableOpacity,
+	TouchableOpacityProps,
+	Text,
+	View,
+	ViewProps,
+	ActivityIndicator,
+} from 'react-native'
 
 import { defaultColors } from '@berty-labs/styles'
 
 const textStyle = { color: defaultColors.white }
 
 export type CardProps = { title?: string } & ViewProps
-
-export const PressableCard: React.FC<{ onPress: TouchableOpacityProps['onPress'] } & CardProps> =
-	React.memo(({ onPress, ...otherProps }) => {
-		return (
-			<TouchableOpacity onPress={onPress}>
-				<Card {...otherProps} />
-			</TouchableOpacity>
-		)
-	})
 
 export const Card: React.FC<CardProps> = React.memo(({ title, children, style, ...otherProps }) => {
 	return (
@@ -37,3 +35,24 @@ export const Card: React.FC<CardProps> = React.memo(({ title, children, style, .
 		</View>
 	)
 })
+
+export const PressableCard: React.FC<{ onPress: TouchableOpacityProps['onPress'] } & CardProps> =
+	React.memo(({ onPress, ...otherProps }) => {
+		return (
+			<TouchableOpacity onPress={onPress}>
+				<Card {...otherProps} />
+			</TouchableOpacity>
+		)
+	})
+
+export const LoaderCard: React.FC<{ text: string } & CardProps> = React.memo(
+	({ text, children, ...other }) => (
+		<Card {...other}>
+			<View style={{ flexDirection: 'row', alignItems: 'center' }}>
+				<ActivityIndicator />
+				<Text style={[textStyle, { marginLeft: 7.5 }]}>{text}</Text>
+			</View>
+			{children}
+		</Card>
+	),
+)
