@@ -29,7 +29,7 @@ const fetchURL = async (url: string, controller: AbortController) => {
 	return reply
 }
 
-const NFT: React.FC<{
+const ArtPiece: React.FC<{
 	index: number
 	item: string
 }> = ({ index, item }) => {
@@ -42,7 +42,7 @@ const NFT: React.FC<{
 		windowSize.height - (90 + insets.bottom + insets.top),
 	)
 
-	const [nft] = useAsyncTransform(
+	const [info] = useAsyncTransform(
 		async controller => {
 			try {
 				if (!mobileIPFS.gatewayURL) {
@@ -59,9 +59,9 @@ const NFT: React.FC<{
 				}
 				const parsedUsableReply = JSON.parse(usableReply)
 				const regex = /\/ipfs\/.+?\/image\/[0-9]+.png/g
-				// recup nft image
+				// recup image
 				const uriFinal = parsedUsableReply.image.match(regex)
-				// fetch nft image
+				// fetch image
 				const nftReply = await fetchURL(mobileIPFS.gatewayURL + uriFinal, controller)
 				if (controller.signal.aborted) {
 					throw new Error('abort')
@@ -73,10 +73,10 @@ const NFT: React.FC<{
 				}
 			} catch (err: unknown) {
 				if (controller.signal.aborted) {
-					console.log('fetch-nft abort:', item, err)
+					console.log('fetch-art abort:', item, err)
 					return
 				}
-				console.warn('fetch-nft error:', err)
+				console.warn('fetch-art error:', err)
 			}
 		},
 		[item, mobileIPFS.gatewayURL],
@@ -96,24 +96,24 @@ const NFT: React.FC<{
 				marginTop: 30,
 			}}
 		>
-			{nft?.uri && nft?.name ? (
+			{info?.uri && info?.name ? (
 				<>
 					<Text
 						selectable={true}
 						style={{
 							fontSize: 30,
 							fontFamily: 'Open Sans',
-							color: defaultColors.white,
+							color: defaultColors.text,
 							marginBottom: 30,
 						}}
 						numberOfLines={1}
 					>
-						{nft.name}
+						{info.name}
 					</Text>
 					<Image
 						key={index}
 						style={{ width: sizeImg, height: sizeImg, marginBottom: 30 }}
-						source={{ uri: nft?.uri }}
+						source={{ uri: info?.uri }}
 						onError={({ nativeEvent: { error } }) => console.warn('failed to load image:', error)}
 					/>
 					<Text
@@ -122,12 +122,12 @@ const NFT: React.FC<{
 							opacity: 0.7,
 							fontSize: 15,
 							fontFamily: 'Open Sans',
-							color: defaultColors.white,
+							color: defaultColors.text,
 							marginBottom: 30,
 							textAlign: 'justify',
 						}}
 					>
-						{nft.desc}
+						{info.desc}
 					</Text>
 				</>
 			) : (
@@ -139,7 +139,7 @@ const NFT: React.FC<{
 	)
 }
 
-export const NftCollection: ScreenFC<'NftCollection'> = () => {
+export const ArtCollection: ScreenFC<'ArtCollection'> = () => {
 	const mobileIPFS = useGomobileIPFS()
 	const winsz = useWindowDimensions()
 
@@ -186,7 +186,7 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 							<Text
 								style={{
 									fontSize: 80,
-									color: defaultColors.white,
+									color: defaultColors.text,
 									marginTop: 30,
 									marginBottom: 30,
 								}}
@@ -194,12 +194,12 @@ export const NftCollection: ScreenFC<'NftCollection'> = () => {
 								REKT
 							</Text>
 						</View>
-						{!ipfsFiles?.length && <Loader text='Loading NFT list from IPFS...' />}
+						{!ipfsFiles?.length && <Loader text='Loading list from IPFS...' />}
 					</View>
 				)}
 				contentContainerStyle={{ alignItems: 'flex-start' }}
 				data={ipfsFiles}
-				renderItem={({ item, index }) => <NFT item={item} index={index} />}
+				renderItem={({ item, index }) => <ArtPiece item={item} index={index} />}
 			/>
 		</AppScreenContainer>
 	)

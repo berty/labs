@@ -5,7 +5,7 @@ clean.gen:
 .PHONY: clean-gen
 
 generate:
-	$(MAKE) -C rn node_modules/.fresh
+	$(MAKE) -C rn node_modules/.mkt
 	buf generate api
 .PHONY: generate
 

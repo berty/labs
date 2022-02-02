@@ -1,5 +1,5 @@
 export const defaultColors = {
-	white: '#FFFFFF',
+	text: '#FFFFFF',
 	black: '#021016',
 	grey: '#303538',
 	yellow: '#FFBF47',

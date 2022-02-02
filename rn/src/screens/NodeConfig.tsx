@@ -22,7 +22,7 @@ import { prettyBytes, useMountEffect } from '@berty-labs/reactutil'
 import { usePathSize } from '@berty-labs/expoutil'
 import { useGomobileIPFS } from '@berty-labs/react-redux'
 
-const textStyle = { color: defaultColors.white, opacity: 0.7 }
+const textStyle = { color: defaultColors.text, opacity: 0.7 }
 
 const space = 15
 
@@ -149,7 +149,7 @@ export const NodeConfig: ScreenFC<'NodeConfig'> = ({
 						justifyContent: 'flex-start',
 					}}
 				>
-					<Text style={{ color: defaultColors.white, fontSize: 3 * space, marginBottom: space }}>
+					<Text style={{ color: defaultColors.text, fontSize: 3 * space, marginBottom: space }}>
 						{name}
 					</Text>
 					{isBareRepo && (

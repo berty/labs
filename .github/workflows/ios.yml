@@ -111,11 +111,11 @@ jobs:
 
       - name: Install iOS app deps (node_modules)
         working-directory: rn
-        run: make node_modules/.fresh
+        run: make node_modules/.mkt
 
       - name: Install iOS app deps (XCode Workspace)
         working-directory: rn
-        run: make ios/Pods/.fresh
+        run: make ios/Pods/.mkt
 
       - name: Build the Archive
         working-directory: rn

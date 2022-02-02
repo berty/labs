@@ -27,7 +27,7 @@ const style: ViewStyle & ImageStyle = {
 }
 
 const textStyle = {
-	color: defaultColors.white,
+	color: defaultColors.text,
 	fontSize: 18,
 }
 
@@ -84,7 +84,7 @@ export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
 			<ScrollView>
 				<View style={{ marginVertical: 30 }}>
 					<View style={{ alignItems: 'center', paddingHorizontal: 30 }}>
-						<Text style={{ color: defaultColors.white, opacity: 0.7 }}>
+						<Text style={{ color: defaultColors.text, opacity: 0.7 }}>
 							This loads a react-native Image from the embedded Gomobile-IPFS gateway and the Pinata
 							gateway concurrently
 						</Text>

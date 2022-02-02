@@ -55,7 +55,7 @@ export const IPFSWebUI: ScreenFC<'IPFSWebUI'> = () => {
 	if (localError) {
 		return (
 			<AppScreenContainer>
-				<Text style={{ color: defaultColors.white }}>{`${localError}`}</Text>
+				<Text style={{ color: defaultColors.text }}>{`${localError}`}</Text>
 			</AppScreenContainer>
 		)
 	}

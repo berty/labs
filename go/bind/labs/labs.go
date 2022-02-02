@@ -3,6 +3,7 @@ package labs
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"sync"
 
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
@@ -25,6 +26,36 @@ func NewLabs(config *Config) (*Labs, error) {
 		logger = zap.NewNop()
 	}
 	logger = logger.Named("labs")
+
+	htmlModules := config.HTMLModules
+
+	moduleMutex := new(sync.Mutex)
+	module := ""
+	staticSrv := http.Server{
+		Addr: "127.0.0.1:9316",
+		Handler: http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+			moduleName := r.Header.Get("X-Labs-Module")
+			moduleMutex.Lock()
+			if moduleName == "" && module == "" {
+				rw.WriteHeader(422)
+				moduleMutex.Unlock()
+				return
+			}
+			if moduleName != "" {
+				module = moduleName
+			}
+			moduleName = module
+			moduleMutex.Unlock()
+			rw.Header().Set("X-Labs-Module", moduleName)
+			http.FileServer(http.Dir(filepath.Join(htmlModules, moduleName))).ServeHTTP(rw, r)
+		}),
+	}
+
+	go func() {
+		if err := staticSrv.ListenAndServe(); err != nil {
+			logger.Error("grpc server listener died", zap.Error(err))
+		}
+	}()
 
 	grpcServer := grpc.NewServer()
 	cleaners := make([]func() error, len(servers))

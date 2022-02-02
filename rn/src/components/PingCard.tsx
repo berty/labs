@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, ViewStyle } from 'react-native'
 
 import { defaultColors } from '@berty-labs/styles'
-import { prettyMilliSeconds } from '@berty-labs/reactutil'
+import { prettyMilliSeconds, useMountEffect } from '@berty-labs/reactutil'
 import { PressableCard } from '@berty-labs/components'
 
 type ServiceStatus =
@@ -22,7 +22,7 @@ type ServiceStatus =
 			time: number
 	  }
 
-const textStyle = { color: defaultColors.white, opacity: 0.7 }
+const textStyle = { color: defaultColors.text, opacity: 0.7 }
 
 const stateString = (state: ServiceStatus) => {
 	switch (state.state) {
@@ -41,11 +41,18 @@ const stateString = (state: ServiceStatus) => {
 	}
 }
 
-export const PingCard: React.FC<{ style?: ViewStyle; name: string; address?: string }> = ({
-	style,
-	name,
-	address,
-}) => {
+export type PingOpts = {
+	name: string
+	address?: string
+	opts?: Omit<Parameters<typeof fetch>[1], 'signal'>
+	allowedStatuses?: number[]
+}
+
+export const PingCard: React.FC<
+	{
+		style?: ViewStyle
+	} & PingOpts
+> = ({ style, name, address, opts, allowedStatuses = [200] }) => {
 	const acRef = React.useRef<AbortController>()
 
 	const [state, setState] = React.useState<ServiceStatus>({
@@ -68,9 +75,17 @@ export const PingCard: React.FC<{ style?: ViewStyle; name: string; address?: str
 				state: 'querying',
 			})
 			try {
-				const reply = await fetch(address, { signal: ac.signal })
+				const reply = await fetch(address, { ...opts, signal: ac.signal })
 				console.log(name, 'ping status:', reply.status)
 				if (ac.signal.aborted) {
+					return
+				}
+				if (!allowedStatuses?.includes(reply.status)) {
+					setState({
+						state: 'dead',
+						deadDetails: `Unexpected status: ${reply.status} ${reply.statusText}`,
+						time: Date.now() - startDate,
+					})
 					return
 				}
 				setState({
@@ -90,16 +105,16 @@ export const PingCard: React.FC<{ style?: ViewStyle; name: string; address?: str
 			}
 		}
 		start()
-	}, [address, name])
+	}, [address, name, allowedStatuses, opts])
 
-	React.useEffect(() => {
+	useMountEffect(() => {
 		refresh()
 		return () => acRef.current?.abort()
-	}, [refresh])
+	})
 
 	return (
 		<PressableCard style={style} title={name} onPress={refresh}>
-			<Text style={[textStyle, { marginBottom: 16 }]}>Address: {address}</Text>
+			<Text style={[textStyle, { marginBottom: 16 }]}>{address}</Text>
 			<Text style={textStyle}>{stateString(state)}</Text>
 		</PressableCard>
 	)

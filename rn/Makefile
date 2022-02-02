@@ -15,14 +15,24 @@ gomobile-ipfs-dst=ios/vendored_pods
 
 kill-program-using-port = $(foreach port,$(1),$(eval pid ?= $(shell lsof -t -i :$(port))) $(if $(pid),$(shell kill $(pid)),))
 
+### html mods
+
+html-mods=$(wildcard html-mods/*)
+
+html-mods.all:
+	mkdir -p html-mods.bundle
+	@for mod in $(html-mods); do echo "--- Making HTML module $$(basename $$mod) ---"; make -C $$mod; done
+	@echo --- Done making HTML modules ---
+.PHONY: html-mods.all
+
 ### js
 
 .PHONY: ios
-ios: node_modules/.fresh ios/Pods/.fresh
+ios: node_modules/.mkt ios/Pods/.mkt html-mods.all
 	npx react-native run-ios \
-		--port="$(METRO_RN_PORT)" \
-		$(if $(IOS_DEVICE),--udid='$(IOS_DEVICE)',) \
-		$(IOS_RN_FLAGS)
+	--port="$(METRO_RN_PORT)" \
+	$(if $(IOS_DEVICE),--udid='$(IOS_DEVICE)',) \
+	$(IOS_RN_FLAGS)
 
 $(IOS_CORE): ../go.mod ../go.sum $(shell find ../go -name '*.go')
 	$(GO) mod download
@@ -42,8 +52,7 @@ unlink:
 	cd react-native-labs-bridge && yarn unlink || true
 	rm -f .link
 
-
-node_modules/.fresh: yarn.lock package.json $(wildcard patches/%)
+node_modules/.mkt: yarn.lock package.json $(wildcard patches/*)
 	$(MAKE) unlink
 	yarn
 	$(MAKE) .link
@@ -55,33 +64,33 @@ ios/vendor/bundle: ios/Gemfile ios/Gemfile.lock
 	cd ios && bundle install
 	touch $@
 
-ios/Pods/.fresh: $(IOS_CORE) ios/Podfile ios/Podfile.lock node_modules/.fresh ios/vendor/bundle
+ios/Pods/.mkt: $(IOS_CORE) ios/Podfile ios/Podfile.lock node_modules/.mkt ios/vendor/bundle
 	cd ios && bundle exec pod install --repo-update
 	touch $@
 
 #### Android
 
 .PHONY: android
-android: node_modules/.fresh
+android: node_modules/.mkt
 	npx react-native run-android \
 		--port="$(METRO_RN_PORT)"
 
 #### Lint
 
 .PHONY: lint
-lint: node_modules/.fresh
+lint: node_modules/.mkt
 	yarn lint
 	npx tsc
 
 .PHONY: lint.fix
-lint.fix: node_modules/.fresh
+lint.fix: node_modules/.mkt
 	yarn lint --fix
 	npx tsc
 
 #### React-Native
 
 .PHONY: metro.start
-metro.start: node_modules/.fresh
+metro.start: node_modules/.mkt
 	npx react-native start --port=$(METRO_RN_PORT)
 
 .PHONY: clean

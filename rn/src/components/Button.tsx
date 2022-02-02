@@ -38,7 +38,7 @@ export const Button: React.FC<ButtonParams> = ({
 			>
 				<Text
 					style={{
-						color: defaultColors.white,
+						color: defaultColors.text,
 						fontWeight: '700',
 						fontSize: 16,
 						fontFamily: 'Open Sans',

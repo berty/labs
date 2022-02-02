@@ -36,7 +36,7 @@ export const GoModule: ScreenFC<'GoModule'> = ({
 	return (
 		<AppScreenContainer>
 			<ScrollView style={{ padding: 15 }}>
-				<Text style={{ color: defaultColors.white }}>{content}</Text>
+				<Text style={{ color: defaultColors.text, opacity: 0.7 }}>{content}</Text>
 			</ScrollView>
 		</AppScreenContainer>
 	)

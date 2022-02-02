@@ -16,11 +16,15 @@ export const IPFSServicesHealth: React.FC<{ style?: ViewStyle }> = ({ style }) =
 	const items = [
 		{
 			name: 'Local IPFS Node API',
-			address: mobileIPFS.apiURL,
+			address: mobileIPFS.apiURL + '/api/v0/id',
+			opts: {
+				method: 'POST',
+			},
 		},
 		{
 			name: 'Local IPFS Gateway',
 			address: mobileIPFS.gatewayURL,
+			allowedStatuses: [404],
 		},
 		/*{
 			name: 'Dead example',
@@ -31,7 +35,7 @@ export const IPFSServicesHealth: React.FC<{ style?: ViewStyle }> = ({ style }) =
 	return (
 		<>
 			{items.map(item => (
-				<PingCard style={style} key={item.name} name={item.name} address={item.address} />
+				<PingCard style={style} key={item.name} {...item} />
 			))}
 		</>
 	)
