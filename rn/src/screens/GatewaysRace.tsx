@@ -12,7 +12,7 @@ import {
 import { ScreenFC } from '@berty-labs/navigation'
 import { defaultColors } from '@berty-labs/styles'
 import { useGomobileIPFS } from '@berty-labs/react-redux'
-import { AppScreenContainer } from '@berty-labs/components'
+import { AppScreenContainer, LoaderScreen } from '@berty-labs/components'
 import { prettyMilliSeconds, useAsyncEffect } from '@berty-labs/reactutil'
 
 // const superlativeApesRoot = "/ipfs/QmbYCLEdnez33AnjigGAhM3ouNj8LMTXBwUqVLaLnUvBbU"
@@ -75,8 +75,8 @@ export const GatewaysRace: ScreenFC<'GatewaysRace'> = () => {
 		[mobileIPFS.gatewayURL],
 	)
 
-	if (mobileIPFS.status !== 'up') {
-		return <Text style={textStyle}>IPFS: {mobileIPFS.status}</Text>
+	if (!mobileIPFS.gatewayURL) {
+		return <LoaderScreen text='Waiting for IPFS node...' />
 	}
 
 	return (

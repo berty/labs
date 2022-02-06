@@ -1,9 +1,13 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, ViewStyle } from 'react-native'
+import { TextDecoder } from 'text-encoding'
 
 import { IPFSIcon } from '@berty-labs/assets'
 import { defaultColors } from '@berty-labs/styles'
 import { useAppNavigation } from '@berty-labs/navigation'
+import { useAsyncTransform } from '@berty-labs/reactutil'
+import { useLabsModulesClient } from '@berty-labs/react-redux'
+import { blmod } from '@berty-labs/api'
 
 type ToolItemParams = {
 	title: string
@@ -62,6 +66,12 @@ const utfIconContainerStyle: ViewStyle = {
 
 export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
 	const { navigate } = useAppNavigation()
+	const modulesClient = useLabsModulesClient()
+
+	const [goModules] = useAsyncTransform(async () => {
+		const reply = await modulesClient?.AllModules({})
+		return reply?.modules
+	}, [modulesClient])
 
 	const items = React.useMemo<ToolItemParams[]>(() => {
 		return [
@@ -72,12 +82,12 @@ export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
 				avatar: <IPFSIcon width={iconsSize} height={iconsSize} />,
 			},
 			{
-				title: 'NFT Collection',
-				desc: 'Browse an NFT collection',
-				onPress: () => navigate('NftCollection'),
+				title: 'IPFS Node Manager',
+				desc: 'Configure and select IPFS nodes',
+				onPress: () => navigate('NodeManager'),
 				avatar: (
 					<View style={utfIconContainerStyle}>
-						<Text style={utfIconStyle}>🎨</Text>
+						<Text style={utfIconStyle}>🔧</Text>
 					</View>
 				),
 			},
@@ -102,17 +112,41 @@ export const ToolsList: React.FC<{ searchText: string }> = ({ searchText }) => {
 				),
 			},
 			{
-				title: 'IPFS Node Manager',
-				desc: 'Configure and select IPFS nodes',
-				onPress: () => navigate('NodeManager'),
+				title: 'NFT Collection',
+				desc: 'Browse an NFT collection',
+				onPress: () => navigate('NftCollection'),
 				avatar: (
 					<View style={utfIconContainerStyle}>
-						<Text style={utfIconStyle}>🔧</Text>
+						<Text style={utfIconStyle}>🎨</Text>
 					</View>
 				),
 			},
+			...(goModules || []).map(mod => {
+				let icon = 'G'
+				if (mod.iconKind === blmod.ModuleInfo_IconKind.ICON_KIND_UTF && mod.iconData.length) {
+					try {
+						const utf8Decoder = new TextDecoder('utf-8')
+						const modIcon = utf8Decoder.decode(mod.iconData)
+						if (modIcon) {
+							icon = modIcon
+						}
+					} catch (err) {
+						console.warn('failed to decode icon:', err)
+					}
+				}
+				return {
+					title: mod.displayName,
+					desc: mod.shortDescription,
+					onPress: () => navigate('GoModule', { name: mod.name, displayName: mod.displayName }),
+					avatar: (
+						<View style={utfIconContainerStyle}>
+							<Text style={utfIconStyle}>{icon}</Text>
+						</View>
+					),
+				}
+			}),
 		]
-	}, [navigate])
+	}, [navigate, goModules])
 
 	const itemsWithSearch = React.useMemo(() => {
 		return searchText

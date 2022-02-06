@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package blmod.v1;
+
+option go_package = "berty.tech/labs/go/pkg/blmod";
+
+message ModuleInfo {
+    enum IconKind {
+        ICON_KIND_UNSPECIFIED = 0;
+        ICON_KIND_UTF = 1;
+        ICON_KIND_PNG = 2;
+        ICON_KIND_SVG = 3;
+    }
+    string name = 1;
+    string display_name = 2;
+    IconKind icon_kind = 3;
+    bytes icon_data = 4;
+    string short_description = 5;
+}
+
+service LabsModulesService {
+    rpc AllModules(AllModulesRequest) returns (AllModulesResponse) {}
+    rpc RunModule(RunModuleRequest) returns (RunModuleResponse) {}
+}
+
+
+message AllModulesRequest {
+
+}
+
+message AllModulesResponse {
+    repeated ModuleInfo modules = 1;
+}
+
+message RunModuleRequest {
+    string name = 1;
+}
+
+message RunModuleResponse {
+    enum ReportKind {
+        REPORT_KIND_UNSPECIFIED = 0;
+        REPORT_KIND_UTF = 1;
+        REPORT_KIND_MARKDOWN = 2;
+    }
+    ReportKind report_kind = 1;
+    bytes report_data = 2;
+}

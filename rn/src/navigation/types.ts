@@ -11,6 +11,7 @@ export type ScreensParams = {
 	NftCollection: undefined
 	NodeManager: undefined
 	NodeConfig: { name: string }
+	GoModule: { name: string; displayName: string }
 }
 
 export type ScreenProps<T extends keyof ScreensParams> = NativeStackScreenProps<ScreensParams, T>

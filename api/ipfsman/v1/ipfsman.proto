@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package ipfsman.v1;
+
+option go_package = "berty.tech/labs/go/pkg/ipfsman";
+
+service IPFSManagerService {
+    rpc StartNode(StartNodeRequest) returns (StartNodeResponse) {}
+    rpc StopNode(StopNodeRequest) returns (StopNodeResponse) {}
+}
+
+
+message StartNodeRequest {
+    string repo_path = 1;
+}
+
+message StartNodeResponse {
+    string id = 1;
+    repeated string api_maddrs = 2;
+    repeated string gateway_maddrs = 4;
+}
+
+message StopNodeRequest {
+    string id = 1;
+}
+
+message StopNodeResponse {
+
+}

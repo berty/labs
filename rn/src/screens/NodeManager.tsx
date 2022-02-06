@@ -13,7 +13,7 @@ import {
 } from '@berty-labs/components'
 import { prettyBytes, useUnmountRef, randomCarretName } from '@berty-labs/reactutil'
 import { defaultColors } from '@berty-labs/styles'
-import { ipfsRepoPath } from '@berty-labs/ipfsutil'
+import { ipfsRepoPath, ipfsReposRoot } from '@berty-labs/ipfsutil'
 import { usePathSize } from '@berty-labs/expoutil'
 import { useGomobileIPFS } from '@berty-labs/react-redux'
 
@@ -81,10 +81,11 @@ export const NodeManager: ScreenFC<'NodeManager'> = ({ navigation: { navigate } 
 	const [repoInfo, setRepoInfo] = React.useState<RepoInfo[]>()
 	const [isCreating, setIsCreating] = React.useState(false)
 	const refresh = React.useCallback(async (controller: AbortController) => {
-		const repos = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory + '/ipfs-repos')
+		await FileSystem.makeDirectoryAsync(ipfsReposRoot, { intermediates: true })
+		const repos = await FileSystem.readDirectoryAsync(ipfsReposRoot)
 		const reposInfos: RepoInfo[] = []
 		for (const repo of repos) {
-			const repoPath = FileSystem.documentDirectory + 'ipfs-repos/' + repo
+			const repoPath = ipfsRepoPath(repo)
 			const info = await FileSystem.getInfoAsync(repoPath)
 			if (controller.signal.aborted) {
 				return
@@ -155,7 +156,7 @@ export const NodeManager: ScreenFC<'NodeManager'> = ({ navigation: { navigate } 
 											const start = async () => {
 												try {
 													const repoPath = ipfsRepoPath(newNodeName)
-													await FileSystem.makeDirectoryAsync(repoPath)
+													await FileSystem.makeDirectoryAsync(repoPath, { intermediates: true })
 													navigate('NodeConfig', { name: newNodeName })
 													await refresh(new AbortController())
 													setNewNodeName(randomCarretName())

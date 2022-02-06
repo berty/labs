@@ -4,6 +4,9 @@ METRO_RN_PORT ?= 8081
 IOS_RN_FLAGS ?=
 IOS_DEVICE ?=
 ANDROID_DEVICE ?=
+CORE_PACKAGE = berty.tech/labs/go/bind/labs
+IOS_CORE = react-native-labs-bridge/ios/Labs.xcframework
+GO ?= go
 
 gomobile-ipfs-src=gomobile-ipfs/packages/build/ios/cocoapods
 gomobile-ipfs-dst=ios/vendored_pods
@@ -14,15 +17,29 @@ kill-program-using-port = $(foreach port,$(1),$(eval pid ?= $(shell lsof -t -i :
 
 ### js
 
+.PHONY: ios
+ios: node_modules/.fresh ios/Pods/.fresh
+	npx react-native run-ios \
+		--port="$(METRO_RN_PORT)" \
+		$(if $(IOS_DEVICE),--udid='$(IOS_DEVICE)',) \
+		$(IOS_RN_FLAGS)
+
+$(IOS_CORE): ../go.mod ../go.sum $(shell find ../go -name '*.go')
+	$(GO) mod download
+	$(GO) install golang.org/x/mobile/cmd/gomobile
+	$(GO) install golang.org/x/mobile/cmd/gobind
+	$(GO) run golang.org/x/mobile/cmd/gomobile init -v
+	$(GO) run golang.org/x/mobile/cmd/gomobile bind $(GOMOBILE_OPT) -v -target=ios,iossimulator -o $(IOS_CORE) $(CORE_PACKAGE)
+
 .link:
-	cd react-native-gomobile-ipfs && yarn link
-	yarn link react-native-gomobile-ipfs
+	cd react-native-labs-bridge && yarn link
+	yarn link react-native-labs-bridge
 	touch $@
 
 .PHONY: unlink
 unlink:
-	yarn unlink react-native-gomobile-ipfs || true
-	cd react-native-gomobile-ipfs && yarn unlink || true
+	yarn unlink react-native-labs-bridge || true
+	cd react-native-labs-bridge && yarn unlink || true
 	rm -f .link
 
 
@@ -38,27 +55,9 @@ ios/vendor/bundle: ios/Gemfile ios/Gemfile.lock
 	cd ios && bundle install
 	touch $@
 
-ios/vendored_pods/Gomobile-IPFS-Core.podspec: react-native-gomobile-ipfs/gomobile-ipfs.version
-	mkdir -p ios/vendored_pods
-	curl -Lo $@ 'https://github.com/ipfs-shipyard/gomobile-ipfs/releases/download/v${shell cat react-native-gomobile-ipfs/gomobile-ipfs.version}/Gomobile-IPFS-Core.podspec'
-
-ios/vendored_pods/Gomobile-IPFS-Bridge.podspec: react-native-gomobile-ipfs/gomobile-ipfs.version
-	mkdir -p ios/vendored_pods
-	curl -Lo $@ 'https://github.com/ipfs-shipyard/gomobile-ipfs/releases/download/v${shell cat react-native-gomobile-ipfs/gomobile-ipfs.version}/Gomobile-IPFS-Bridge.podspec'
-
-ios/Pods/.fresh: ios/Podfile ios/Podfile.lock node_modules/.fresh ios/vendor/bundle ios/vendored_pods/Gomobile-IPFS-Core.podspec ios/vendored_pods/Gomobile-IPFS-Bridge.podspec
-	rm -fr ios/Pods
-	perl -i -pe "s/s\.dependency 'Gomobile-IPFS-Bridge', '~> .+'/s\.dependency 'Gomobile-IPFS-Bridge', '~> ${shell cat react-native-gomobile-ipfs/gomobile-ipfs.version}'/" react-native-gomobile-ipfs/react-native-gomobile-ipfs.podspec
-	cd ios && bundle exec pod update Gomobile-IPFS-Core Gomobile-IPFS-Bridge --no-repo-update
+ios/Pods/.fresh: $(IOS_CORE) ios/Podfile ios/Podfile.lock node_modules/.fresh ios/vendor/bundle
 	cd ios && bundle exec pod install --repo-update
 	touch $@
-
-.PHONY: ios
-ios: node_modules/.fresh ios/Pods/.fresh
-	npx react-native run-ios \
-		--port="$(METRO_RN_PORT)" \
-		$(if $(IOS_DEVICE),--udid='$(IOS_DEVICE)',) \
-		$(IOS_RN_FLAGS)
 
 #### Android
 

@@ -15,6 +15,9 @@ export const IPFSWebUI: ScreenFC<'IPFSWebUI'> = () => {
 	const [imageURI, setImageURI] = React.useState<string>()
 	useAsyncEffect(
 		async ac => {
+			if (!mobileIPFS.gatewayURL) {
+				return
+			}
 			const url = `${mobileIPFS.gatewayURL}/ipfs/bafybeihcyruaeza7uyjd6ugicbcrqumejf6uf353e5etdkhotqffwtguva`
 			try {
 				console.log('pre-fetching:', url)
@@ -43,6 +46,9 @@ export const IPFSWebUI: ScreenFC<'IPFSWebUI'> = () => {
 		},
 		[mobileIPFS.gatewayURL],
 	)
+	if (!mobileIPFS.gatewayURL) {
+		return <LoaderScreen text='Waiting for IPFS node...' />
+	}
 	if (!loadedLocal) {
 		return <LoaderScreen text='Loading interface from IPFS...' />
 	}

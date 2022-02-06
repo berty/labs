@@ -4,3 +4,6 @@ declare module '*.svg' {
 	const content: React.FC<SvgProps>
 	export default content
 }
+
+// TODO: fix module transpilation
+declare module 'react-native-labs-bridge'
