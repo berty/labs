@@ -26,6 +26,7 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9471DEA1278471C800186ED2 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9471DEA0278471C800186ED2 /* CoreBluetooth.framework */; };
 		9471DEA3278471D100186ED2 /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9471DEA2278471D100186ED2 /* MultipeerConnectivity.framework */; };
+		947EB4C627AA59210029E559 /* html-mods.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 947EB4C527AA59210029E559 /* html-mods.bundle */; };
 		ADD449188196630D379B44C4 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC3EB67675AD648E7229FC5 /* ExpoModulesProvider.swift */; };
 		FAA4DE4083AB0380F4CBB844 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC222A8922B8F2BEA33D3877 /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
@@ -66,6 +67,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = BertyLabs/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9471DEA0278471C800186ED2 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		9471DEA2278471D100186ED2 /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
+		947EB4C527AA59210029E559 /* html-mods.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = "html-mods.bundle"; path = "../html-mods.bundle"; sourceTree = "<group>"; };
 		94B078272798151300B35B97 /* BertyLabs.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BertyLabs.entitlements; path = BertyLabs/BertyLabs.entitlements; sourceTree = "<group>"; };
 		ABFE59519B596E51CEFDCCC0 /* libPods-BertyLabs-BertyLabsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BertyLabs-BertyLabsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0A881CF5CF3F2B244570E2A /* Pods-BertyLabs.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BertyLabs.debug.xcconfig"; path = "Target Support Files/Pods-BertyLabs/Pods-BertyLabs.debug.xcconfig"; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				94B078272798151300B35B97 /* BertyLabs.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				947EB4C527AA59210029E559 /* html-mods.bundle */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
@@ -327,6 +330,7 @@
 				5A6B64222784A3F50081B7B1 /* OpenSans-SemiBold.ttf in Resources */,
 				5A6B641B2784A3F50081B7B1 /* OpenSans-Regular.ttf in Resources */,
 				5A6B64202784A3F50081B7B1 /* OpenSans-Light.ttf in Resources */,
+				947EB4C627AA59210029E559 /* html-mods.bundle in Resources */,
 				5A6B641F2784A3F50081B7B1 /* OpenSans-ExtraBold.ttf in Resources */,
 				5A6B641E2784A3F50081B7B1 /* OpenSans-Bold.ttf in Resources */,
 				5A6B641C2784A3F50081B7B1 /* OpenSans-LightItalic.ttf in Resources */,

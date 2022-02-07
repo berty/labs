@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, ScrollView, TextInput } from 'react-native'
+import { View, ScrollView, TextInput, ViewStyle } from 'react-native'
 
 import { BertyLabsLogo, Search, TextBerty, TextLabs } from '@berty-labs/assets'
 import { ScreenFC } from '@berty-labs/navigation'
@@ -8,61 +8,61 @@ import { AppScreenContainer } from '@berty-labs/components'
 
 import { ToolsList } from './ToolsList'
 
-const HeaderHome: React.FC<{ onSearchChange: (s: string) => void }> = ({ onSearchChange }) => {
-	return (
-		<View>
-			<View
-				style={{
-					flexDirection: 'row',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-					flex: 1,
-				}}
-			>
-				<View style={{ flex: 1 }}>
-					<TextBerty height={13} />
-				</View>
-				<View>
-					<BertyLabsLogo width={60} height={60} />
-				</View>
-				<View style={{ flex: 1 }}>
-					<TextLabs height={15} style={{ alignSelf: 'flex-end' }} />
-				</View>
-			</View>
-			<View
-				style={{
-					flexDirection: 'row',
-					height: 50,
-					flex: 1,
-					borderRadius: 8,
-					backgroundColor: defaultColors.black,
-					alignItems: 'center',
-					paddingLeft: 20,
-				}}
-			>
-				<Search width={20} height={20} />
-				<TextInput
-					autoCorrect={false}
-					placeholderTextColor={defaultColors.white + 'B0'}
-					style={{ color: defaultColors.white, flex: 1, marginLeft: 10, fontFamily: 'Open Sans' }}
-					placeholder='Search for tool'
-					onChange={evt => onSearchChange(evt.nativeEvent.text)}
-				/>
-			</View>
-		</View>
-	)
-}
+const size = 16
+const logoSize = 1.4
 
-export const Home: ScreenFC<'Home'> = () => {
+const HeaderHome: React.FC<{ onSearchChange: (s: string) => void; style?: ViewStyle }> = React.memo(
+	({ onSearchChange, style }) => {
+		return (
+			<View style={style}>
+				<View
+					style={{
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+					}}
+				>
+					<TextBerty height={size * 0.67 * logoSize} />
+					<BertyLabsLogo width={size * 3 * logoSize} height={size * 3 * logoSize} />
+					<TextLabs height={size * 0.76 * logoSize} />
+				</View>
+				<View
+					style={{
+						flexDirection: 'row',
+						height: size * 2.5,
+						borderRadius: size * 0.4,
+						backgroundColor: defaultColors.black,
+						alignItems: 'center',
+						paddingLeft: size,
+					}}
+				>
+					<Search width={size} height={size} />
+					<TextInput
+						autoCorrect={false}
+						placeholderTextColor={defaultColors.text + 'B0'}
+						style={{ color: defaultColors.text, flex: 1, marginLeft: 10, fontFamily: 'Open Sans' }}
+						placeholder='Search for tool'
+						onChange={evt => onSearchChange(evt.nativeEvent.text)}
+					/>
+				</View>
+			</View>
+		)
+	},
+)
+
+export const Home: ScreenFC<'Home'> = React.memo(() => {
 	const [searchString, setSearchString] = React.useState('')
 	return (
 		<AppScreenContainer>
-			<ScrollView style={{ marginHorizontal: 20 }}>
-				<HeaderHome onSearchChange={setSearchString} />
+			<HeaderHome
+				onSearchChange={setSearchString}
+				style={{ marginHorizontal: size, marginBottom: size }}
+			/>
+			<ScrollView style={{ marginHorizontal: size, marginBottom: size }}>
 				<ToolsList searchText={searchString.toLowerCase()} />
 			</ScrollView>
 		</AppScreenContainer>
 	)
-}
+})
 
 export default Home

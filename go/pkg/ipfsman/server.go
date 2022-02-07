@@ -4,12 +4,14 @@ import (
 	context "context"
 	crand "crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"path"
 	"strings"
 	"sync"
 
 	mobileipfs "github.com/ipfs-shipyard/gomobile-ipfs/go/bind/core"
+	ipfs_config "github.com/ipfs/go-ipfs-config"
 	"github.com/pkg/errors"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -143,6 +145,9 @@ func startIPFSNode(repoPath string, initialConfig *mobileipfs.Config, proxDriver
 			if initialConfig, err = mobileipfs.NewDefaultConfig(); err != nil {
 				return nil, errors.Wrap(err, "get default IPFS config")
 			}
+			if err := overrideAPIAllowedOrigins(initialConfig, "*"); err != nil {
+				return nil, errors.Wrap(err, "override default IPFS API allowed origins")
+			}
 		}
 		if err := mobileipfs.InitRepo(repoPath, initialConfig); err != nil {
 			return nil, errors.Wrap(err, fmt.Sprintf("init repo at '%s'", repoPath))
@@ -157,6 +162,25 @@ func startIPFSNode(repoPath string, initialConfig *mobileipfs.Config, proxDriver
 		return nil, errors.Wrap(err, fmt.Sprintf("instanciate node with repo at '%s'", repoPath))
 	}
 	return node, nil
+}
+
+func overrideAPIAllowedOrigins(initialConfig *mobileipfs.Config, origin string) error {
+	apiConfigBytes, err := initialConfig.GetKey("API")
+	if err != nil {
+		return errors.Wrap(err, "get api config")
+	}
+	var apiConfig ipfs_config.API
+	if err := json.Unmarshal(apiConfigBytes, &apiConfig); err != nil {
+		return errors.Wrap(err, "unmarshal api config")
+	}
+	apiConfig.HTTPHeaders["Access-Control-Allow-Origin"] = []string{origin}
+	if apiConfigBytes, err = json.Marshal(apiConfig); err != nil {
+		return errors.Wrap(err, "remarshal api config")
+	}
+	if err := initialConfig.SetKey("API", apiConfigBytes); err != nil {
+		return errors.Wrap(err, "set api config")
+	}
+	return nil
 }
 
 type nodeWrapper struct {

@@ -31,6 +31,6 @@ func (m *module) Info() (*blmod.ModuleInfo, error) {
 func (m *module) Run(ctx context.Context) (*blmod.RunModuleResponse, error) {
 	return &blmod.RunModuleResponse{
 		ReportKind: blmod.RunModuleResponse_REPORT_KIND_UTF,
-		ReportData: ([]byte)("Hello module!"),
+		ReportData: ([]byte)("Hello from Go module!"),
 	}, nil
 }

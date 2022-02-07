@@ -12,13 +12,16 @@ import {
 import {
 	ServicesHealth,
 	GatewaysRace,
-	NftCollection,
+	ArtCollection,
 	OnBoarding,
 	Home,
 	NodeManager,
 	IPFSWebUI,
 	NodeConfig,
 	GoModule,
+	HTMLModule,
+	IPFSLogs,
+	Browser,
 } from '@berty-labs/screens'
 import { defaultColors } from '@berty-labs/styles'
 
@@ -41,7 +44,7 @@ const screenOptions: NativeStackNavigationOptions = {
 		fontWeight: '700',
 		fontSize: 20,
 	},
-	headerTintColor: defaultColors.white,
+	headerTintColor: defaultColors.text,
 	headerBackTitleVisible: false,
 	headerShadowVisible: false,
 }
@@ -69,14 +72,19 @@ export const Navigation: React.FC = React.memo(() => {
 				options={{ ...screenOptions, title: 'Gateways Race' }}
 			/>
 			<NavigationStack.Screen
-				name={'NftCollection'}
-				component={NftCollection}
-				options={{ ...screenOptions, title: 'NFT Collection' }}
+				name={'ArtCollection'}
+				component={ArtCollection}
+				options={{ ...screenOptions, title: 'Art Collection' }}
 			/>
 			<NavigationStack.Screen
 				name={'IPFSWebUI'}
 				component={IPFSWebUI}
 				options={{ ...screenOptions, title: 'IPFS Web Interface' }}
+			/>
+			<NavigationStack.Screen
+				name={'IPFSLogs'}
+				component={IPFSLogs}
+				options={{ ...screenOptions, title: 'IPFS Node Logs' }}
 			/>
 			<NavigationStack.Screen
 				name={'NodeManager'}
@@ -92,6 +100,16 @@ export const Navigation: React.FC = React.memo(() => {
 				name={'GoModule'}
 				component={GoModule}
 				options={{ ...screenOptions, title: 'Go Module' }}
+			/>
+			<NavigationStack.Screen
+				name={'HTMLModule'}
+				component={HTMLModule}
+				options={{ ...screenOptions, title: 'HTML Module' }}
+			/>
+			<NavigationStack.Screen
+				name={'Browser'}
+				component={Browser}
+				options={{ ...screenOptions, title: 'Browser' }}
 			/>
 		</NavigationStack.Navigator>
 	)

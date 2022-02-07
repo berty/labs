@@ -1,0 +1,6 @@
+{
+    "displayName": "IPFS File Upload",
+    "shortDescription": "Upload a file to IPFS",
+    "iconKind": "UTF",
+    "iconUTF": "⬆️"
+}

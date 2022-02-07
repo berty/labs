@@ -8,10 +8,16 @@ export type ScreensParams = {
 	IPFSWebUI: undefined
 	ServicesHealth: undefined
 	GatewaysRace: undefined
-	NftCollection: undefined
+	ArtCollection: undefined
 	NodeManager: undefined
 	NodeConfig: { name: string }
 	GoModule: { name: string; displayName: string }
+	HTMLModule: {
+		name: string
+		displayName?: string
+	}
+	IPFSLogs: undefined
+	Browser: undefined
 }
 
 export type ScreenProps<T extends keyof ScreensParams> = NativeStackScreenProps<ScreensParams, T>

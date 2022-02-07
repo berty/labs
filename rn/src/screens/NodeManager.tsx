@@ -26,9 +26,9 @@ type RepoInfo = {
 
 const space = 15
 
-const textStyle: TextStyle = { color: defaultColors.white, opacity: 0.7, fontSize: 15 }
+const textStyle: TextStyle = { color: defaultColors.text, opacity: 0.7, fontSize: 15 }
 const titleStyle: TextStyle = {
-	color: defaultColors.white,
+	color: defaultColors.text,
 	fontSize: 30,
 	marginTop: 30,
 	marginBottom: 15,
@@ -135,11 +135,11 @@ export const NodeManager: ScreenFC<'NodeManager'> = ({ navigation: { navigate } 
 									style={{
 										fontSize: 25,
 										marginBottom: 15,
-										color: defaultColors.white,
+										color: defaultColors.text,
 										paddingVertical: 10,
 										borderRadius: 6,
 										paddingHorizontal: 15,
-										backgroundColor: defaultColors.white + '07',
+										backgroundColor: defaultColors.text + '07',
 										width: '100%',
 									}}
 									placeholder='Type the new node name'

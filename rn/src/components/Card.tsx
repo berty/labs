@@ -10,7 +10,7 @@ import {
 
 import { defaultColors } from '@berty-labs/styles'
 
-const textStyle = { color: defaultColors.white }
+const textStyle = { color: defaultColors.text }
 
 export type CardProps = { title?: string } & ViewProps
 
