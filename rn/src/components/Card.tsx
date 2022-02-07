@@ -6,6 +6,7 @@ import {
 	View,
 	ViewProps,
 	ActivityIndicator,
+	Pressable,
 } from 'react-native'
 
 import { defaultColors } from '@berty-labs/styles'
@@ -29,7 +30,9 @@ export const Card: React.FC<CardProps> = React.memo(({ title, children, style, .
 			{...otherProps}
 		>
 			{typeof title === 'string' && (
-				<Text style={[textStyle, { fontSize: 25, marginBottom: 15 }]}>{title}</Text>
+				<Text style={[textStyle, { fontSize: 25, marginBottom: children ? 15 : undefined }]}>
+					{title}
+				</Text>
 			)}
 			{children}
 		</View>
@@ -45,14 +48,30 @@ export const PressableCard: React.FC<{ onPress: TouchableOpacityProps['onPress']
 		)
 	})
 
-export const LoaderCard: React.FC<{ text: string } & CardProps> = React.memo(
-	({ text, children, ...other }) => (
-		<Card {...other}>
+export const LoaderCard: React.FC<
+	{ text: string; size?: number; onCancel?: () => void } & CardProps
+> = React.memo(({ text, children, size, onCancel, ...other }) => (
+	<Card {...other}>
+		<View
+			style={{
+				flexDirection: 'row',
+				alignItems: 'center',
+				justifyContent: 'space-between',
+				width: '100%',
+			}}
+		>
 			<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-				<ActivityIndicator />
-				<Text style={[textStyle, { marginLeft: 7.5 }]}>{text}</Text>
+				<ActivityIndicator size={size} />
+				<Text style={[textStyle, { marginLeft: size ? size / 2 : 7.5, fontSize: size }]}>
+					{text}
+				</Text>
 			</View>
-			{children}
-		</Card>
-	),
-)
+			{typeof onCancel === 'function' && (
+				<Pressable onPress={onCancel}>
+					<Text>❌</Text>
+				</Pressable>
+			)}
+		</View>
+		{children}
+	</Card>
+))

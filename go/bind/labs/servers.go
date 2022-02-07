@@ -8,13 +8,13 @@ import (
 )
 
 type serverDefinition struct {
-	name     string
+	Name     string
 	register func(s *grpc.Server, logger *zap.Logger) (func() error, error)
 }
 
 var servers = []*serverDefinition{
 	{
-		name: "ipfsman",
+		Name: "ipfsman",
 		register: func(s *grpc.Server, logger *zap.Logger) (func() error, error) {
 			ipfsmanServer, err := ipfsman.NewServer(logger)
 			if err != nil {
@@ -25,7 +25,7 @@ var servers = []*serverDefinition{
 		},
 	},
 	{
-		name: "blmod",
+		Name: "blmod",
 		register: func(s *grpc.Server, logger *zap.Logger) (func() error, error) {
 			blmodServer, err := blmod.NewServer(modules)
 			if err != nil {

@@ -32,6 +32,7 @@ export const UseIPFSNodeButton: React.FC<{
 					? 'Waiting'
 					: 'Use'
 			}
+			loading={isInUse ? (isUnloading ? true : false) : isLoading ? true : isWaiting ? true : false}
 			shrink
 			style={style}
 			onPress={() => {

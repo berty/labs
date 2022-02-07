@@ -15,6 +15,9 @@ gomobile-ipfs-dst=ios/vendored_pods
 
 kill-program-using-port = $(foreach port,$(1),$(eval pid ?= $(shell lsof -t -i :$(port))) $(if $(pid),$(shell kill $(pid)),))
 
+all: ios
+.PHONY: all
+
 ### html mods
 
 html-mods=$(wildcard html-mods/*)

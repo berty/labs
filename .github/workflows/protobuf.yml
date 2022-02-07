@@ -28,6 +28,11 @@ jobs:
       - name: Lint
         run: buf lint api
 
+      - name: Setup protoc
+        uses: arduino/setup-protoc@v1.1.2
+        with:
+          version: "3.x"
+
       - name: Regenerate
         run: make regen
 

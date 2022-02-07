@@ -20,7 +20,7 @@ message ModuleInfo {
 
 service LabsModulesService {
     rpc AllModules(AllModulesRequest) returns (AllModulesResponse) {}
-    rpc RunModule(RunModuleRequest) returns (RunModuleResponse) {}
+    rpc RunModule(RunModuleRequest) returns (stream RunModuleResponse) {}
 }
 
 
@@ -34,14 +34,9 @@ message AllModulesResponse {
 
 message RunModuleRequest {
     string name = 1;
+    bytes args = 2;
 }
 
 message RunModuleResponse {
-    enum ReportKind {
-        REPORT_KIND_UNSPECIFIED = 0;
-        REPORT_KIND_UTF = 1;
-        REPORT_KIND_MARKDOWN = 2;
-    }
-    ReportKind report_kind = 1;
-    bytes report_data = 2;
+    bytes payload = 1;
 }

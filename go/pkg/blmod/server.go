@@ -2,6 +2,7 @@ package blmod
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/pkg/errors"
 )
@@ -30,10 +31,6 @@ func NewServer(factos []ModuleFactory) (*Server, error) {
 	}, nil
 }
 
-func (s *Server) Close() error {
-	return s.reg.Close()
-}
-
 func (s *Server) AllModules(ctx context.Context, req *AllModulesRequest) (*AllModulesResponse, error) {
 	mods := s.reg.All()
 	info := make([]*ModuleInfo, len(mods))
@@ -47,10 +44,26 @@ func (s *Server) AllModules(ctx context.Context, req *AllModulesRequest) (*AllMo
 	return &AllModulesResponse{Modules: info}, nil
 }
 
-func (s *Server) RunModule(ctx context.Context, req *RunModuleRequest) (*RunModuleResponse, error) {
+type moduleContext struct {
+	srv LabsModulesService_RunModuleServer
+}
+
+func (mc *moduleContext) Send(v interface{}) error {
+	bytes, err := json.Marshal(v)
+	if err != nil {
+		return errors.Wrap(err, "marshal JSON")
+	}
+	return mc.srv.Send(&RunModuleResponse{Payload: bytes})
+}
+
+func (s *Server) RunModule(req *RunModuleRequest, srv LabsModulesService_RunModuleServer) error {
 	mod, err := s.reg.Get(req.GetName())
 	if err != nil {
-		return nil, errors.Wrap(err, "get module")
+		return errors.Wrap(err, "get module")
 	}
-	return mod.Run(ctx)
+	return mod.Run(srv.Context(), req.GetArgs(), &moduleContext{srv})
+}
+
+func (s *Server) Close() error {
+	return s.reg.Close()
 }

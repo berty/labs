@@ -9,11 +9,12 @@ import { randomCarretName } from '@berty-labs/reactutil'
 import { store } from '@berty-labs/redux'
 import { ipfsman } from '@berty-labs/api'
 import { ipfsRepoPath } from '@berty-labs/ipfsutil'
+import { grpc } from '@improbable-eng/grpc-web'
 
 const ipfsNodes: { [key: string]: string | undefined } = {}
 
 const startNode = async (
-	client: ipfsman.IPFSManagerService,
+	client: ipfsman.IPFSManagerServiceClient,
 	stor: typeof store,
 	ac: AbortController,
 	nextNode: string,
@@ -26,11 +27,21 @@ const startNode = async (
 	try {
 		// Create instance of IPFS. Use one instance per app.
 		console.log('starting ipfs node', nextNode)
-		const startNodeReply = await client.StartNode({
-			repoPath: ipfsRepoPath(nextNode),
-		})
+		const req = new ipfsman.StartNodeRequest()
+		req.setRepoPath(ipfsRepoPath(nextNode))
+		const startNodeReply = await new Promise<ipfsman.StartNodeResponse>((resolve, reject) =>
+			client.startNode(req, new grpc.Metadata(), (err, reply) => {
+				if (err) {
+					reject(err)
+				} else if (!reply) {
+					reject(new Error('emply reply'))
+				} else {
+					resolve(reply)
+				}
+			}),
+		)
 		console.log('started ipfs node', nextNode)
-		ipfs = startNodeReply.id
+		ipfs = startNodeReply.getId()
 		state = 'started'
 		console.log(ipfs)
 
@@ -39,27 +50,38 @@ const startNode = async (
 		if (ac.signal.aborted) {
 			throw new Error('abort')
 		}
-		const gaParts = startNodeReply.gatewayMaddrs[0].split('/')
+		const gaMaddrs = startNodeReply.getGatewayMaddrsList()
+		if (gaMaddrs.length < 1) {
+			throw new Error('missing gateway address')
+		}
+		const apiMaddrs = startNodeReply.getApiMaddrsList()
+		if (apiMaddrs.length < 1) {
+			throw new Error('missing gateway address')
+		}
+		const gaParts = gaMaddrs[0].split('/')
 		const gatewayURL = `http://${gaParts[2]}:${gaParts[4]}`
-		const aaParts = startNodeReply.apiMaddrs[0].split('/')
-		const apiURL = `http://${aaParts[2]}:${aaParts[4]}`
+		const apiParts = apiMaddrs[0].split('/')
+		const apiURL = `http://${apiParts[2]}:${apiParts[4]}`
 		ipfsNodes[nextNode] = ipfs
 		stor.dispatch(ipfsNodeStarted({ nodeName: nextNode, gatewayURL, apiURL }))
 	} catch (err) {
 		console.warn('failed to fully start ipfs node', nextNode, err)
 		if (ipfs && state === 'started') {
-			try {
-				console.log('stopping ipfs node', nextNode)
-				await client.StopNode({ id: ipfs })
-			} catch (err) {
-				console.warn('failed to stop node:', err)
-			}
+			console.log('stopping ipfs node', nextNode)
+			const req = new ipfsman.StopNodeRequest()
+			req.setId(nextNode)
+			client.stopNode(req, new grpc.Metadata(), err => {
+				if (err) {
+					console.warn('failed to stop node:', err)
+				}
+				stor.dispatch(ipfsNodeStopped(nextNode))
+			})
 		}
 	}
 }
 
 const stopNode = async (
-	client: ipfsman.IPFSManagerService,
+	client: ipfsman.IPFSManagerServiceClient,
 	stor: typeof store,
 	nodeName: string,
 ) => {
@@ -68,19 +90,25 @@ const stopNode = async (
 		return
 	}
 	delete ipfsNodes[nodeName]
-	try {
-		console.log('stopping ipfs node', nodeName)
-		await client.StopNode({ id: node })
-	} catch (err) {
-		console.warn('failed to stop node:', err)
-	}
-	stor.dispatch(ipfsNodeStopped(nodeName))
+	console.log('stopping ipfs node', nodeName)
+	const req = new ipfsman.StopNodeRequest()
+	req.setId(node)
+	client.stopNode(req, new grpc.Metadata(), err => {
+		if (err) {
+			console.warn('failed to stop node:', err)
+		}
+		stor.dispatch(ipfsNodeStopped(nodeName))
+	})
 }
 
-export const observeIPFS = (client: ipfsman.IPFSManagerService) => {
+export const observeIPFS = (client: ipfsman.IPFSManagerServiceClient) => {
 	let inited = false
 	return observeStore((store, prev, next) => {
-		if (!inited && (next as any)?._persist.rehydrated && next.ipfsVolatile.status === 'down') {
+		if (!(next as any)?._persist.rehydrated) {
+			return
+		}
+
+		if (!inited && next.ipfsVolatile.status === 'down') {
 			console.log('starting initial node')
 			inited = true
 			store.dispatch(startIPFSNode(next.ipfs.nodeName || randomCarretName()))

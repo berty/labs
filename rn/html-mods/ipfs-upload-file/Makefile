@@ -26,5 +26,5 @@ $(NODE_MODULES_TARGET): $(REPO_TARGET) $(REPO_ROOT)/package.json
 	touch $@
 
 dev: $(REPO_TARGET) $(NODE_MODULES_TARGET)
-	cd $(REPO_ROOT) &&npm start
+	cd $(REPO_ROOT) && npm start
 .PHONY: dev
