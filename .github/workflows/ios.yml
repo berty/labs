@@ -44,7 +44,7 @@ jobs:
           #    optimized      WIP
           #
           # TODO: use a github action secret to pass the builder strategy dynamically
-          node .github/workflows/mac-runner-matrix-builder.js dc4
+          node .github/workflows/mac-runner-matrix-builder.js github
 
   build:
     needs: mac_runner_matrix_builder
@@ -116,6 +116,10 @@ jobs:
       - name: Install iOS app deps (XCode Workspace)
         working-directory: rn
         run: make ios/Pods/.mkt
+
+      - name: Build HTML Modules
+        working-directory: rn
+        run: make html-mods.all
 
       - name: Build the Archive
         working-directory: rn
