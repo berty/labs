@@ -117,6 +117,10 @@ jobs:
         working-directory: rn
         run: make ios/Pods/.mkt
 
+      - name: Build HTML Modules
+        working-directory: rn
+        run: make html-mods.all
+
       - name: Build the Archive
         working-directory: rn
         run: |
