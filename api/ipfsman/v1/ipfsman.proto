@@ -17,7 +17,7 @@ message StartNodeRequest {
 message StartNodeResponse {
     string id = 1;
     repeated string api_maddrs = 2;
-    repeated string gateway_maddrs = 4;
+    repeated string gateway_maddrs = 3;
 }
 
 message StopNodeRequest {

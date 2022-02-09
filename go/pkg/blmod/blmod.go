@@ -9,9 +9,13 @@ import (
 	"go.uber.org/multierr"
 )
 
+type ModuleContext interface {
+	Send(interface{}) error
+}
+
 type Module interface {
 	Info() (*ModuleInfo, error)
-	Run(context.Context) (*RunModuleResponse, error)
+	Run(ctx context.Context, args []byte, mc ModuleContext) error
 	Close() error
 }
 

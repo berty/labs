@@ -5,8 +5,8 @@ import { start } from 'react-native-labs-bridge'
 import { blmod, ipfsman } from '@berty-labs/api'
 
 type LabsBridgeClients = {
-	blmod: blmod.LabsModulesService
-	ipfsman: ipfsman.IPFSManagerService
+	blmod: blmod.LabsModulesServiceClient
+	ipfsman: ipfsman.IPFSManagerServiceClient
 }
 
 type LabsBridgeState =
@@ -14,19 +14,18 @@ type LabsBridgeState =
 	| ['up', LabsBridgeClients, undefined]
 	| ['error', undefined, unknown]
 
-const ipfsmanRPC = new ipfsman.GrpcWebImpl('http://127.0.0.1:9315', {
-	// Only necessary for tests running on node. Remove the
-	// transport config when actually using in the browser.
-	transport: grpc.WebsocketTransport(),
-	debug: __DEV__,
+const transport = grpc.WebsocketTransport()
+const debug = __DEV__
+
+const ipfsmanClient = new ipfsman.IPFSManagerServiceClient('http://127.0.0.1:9315', {
+	transport,
+	debug,
 	// metadata: new grpc.Metadata({ SomeHeader: 'bar' }),
 })
 
-const blmodRPC = new blmod.GrpcWebImpl('http://127.0.0.1:9315', {
-	// Only necessary for tests running on node. Remove the
-	// transport config when actually using in the browser.
-	transport: grpc.WebsocketTransport(),
-	debug: __DEV__,
+const blmodClient = new blmod.LabsModulesServiceClient('http://127.0.0.1:9315', {
+	transport,
+	debug,
 	// metadata: new grpc.Metadata({ SomeHeader: 'bar' }),
 })
 
@@ -43,8 +42,8 @@ export const useLabsBridgeState = () => {
 					return
 				}
 				const clients: LabsBridgeClients = {
-					blmod: new blmod.LabsModulesServiceClientImpl(blmodRPC),
-					ipfsman: new ipfsman.IPFSManagerServiceClientImpl(ipfsmanRPC),
+					blmod: blmodClient,
+					ipfsman: ipfsmanClient,
 				}
 				setState(['up', clients, undefined])
 			})

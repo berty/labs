@@ -3,21 +3,36 @@ module berty.tech/labs
 go 1.17
 
 require (
+	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/ipfs-shipyard/gomobile-ipfs/go v0.0.0-20220201124626-a36f2adc5a3a
+	github.com/ipfs/go-datastore v0.5.1
+	github.com/ipfs/go-ds-badger v0.3.0
+	github.com/ipfs/go-ds-badger2 v0.1.3
+	github.com/ipfs/go-ds-flatfs v0.5.1
+	github.com/ipfs/go-ds-leveldb v0.5.0
+	github.com/ipfs/go-ds-sql v0.3.0
+	github.com/ipfs/go-ipfs-chunker v0.0.5
+	github.com/ipfs/go-ipfs-config v0.18.0
+	github.com/multiformats/go-multiaddr v0.5.0
+	github.com/mutecomm/go-sqlcipher/v4 v4.4.2
+	github.com/peterbourgon/ff/v3 v3.1.2
 	github.com/pkg/errors v0.9.1
+	github.com/syndtr/goleveldb v1.0.0
 	go.uber.org/multierr v1.7.0
 	go.uber.org/zap v1.20.0
 	golang.org/x/mobile v0.0.0-20220112015953-858099ff7816
 	google.golang.org/grpc v1.44.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 	google.golang.org/protobuf v1.27.1
+	moul.io/u v1.27.0
 )
 
 require (
 	bazil.org/fuse v0.0.0-20200117225306-7b5117fecadc // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.4.0 // indirect
 	github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96 // indirect
+	github.com/DataDog/zstd v1.4.1 // indirect
 	github.com/Stebalien/go-bitfield v0.0.1 // indirect
 	github.com/alecthomas/units v0.0.0-20210927113745-59d0afb8317a // indirect
 	github.com/alexbrainman/goissue34681 v0.0.0-20191006012335-3fc7a47baff5 // indirect
@@ -37,7 +52,9 @@ require (
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
 	github.com/dgraph-io/badger v1.6.2 // indirect
-	github.com/dgraph-io/ristretto v0.0.2 // indirect
+	github.com/dgraph-io/badger/v2 v2.2007.3 // indirect
+	github.com/dgraph-io/ristretto v0.0.3-0.20200630154024-f66de99634de // indirect
+	github.com/dgryski/go-farm v0.0.0-20190423205320-6a90982ecee2 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/elgris/jsondiff v0.0.0-20160530203242-765b5c24c302 // indirect
 	github.com/facebookgo/atomicfile v0.0.0-20151019160806-2de1f203e7d5 // indirect
@@ -52,7 +69,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
+	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
@@ -68,10 +85,6 @@ require (
 	github.com/ipfs/go-blockservice v0.2.1 // indirect
 	github.com/ipfs/go-cid v0.1.0 // indirect
 	github.com/ipfs/go-cidutil v0.0.2 // indirect
-	github.com/ipfs/go-datastore v0.5.1 // indirect
-	github.com/ipfs/go-ds-badger v0.3.0 // indirect
-	github.com/ipfs/go-ds-flatfs v0.5.1 // indirect
-	github.com/ipfs/go-ds-leveldb v0.5.0 // indirect
 	github.com/ipfs/go-ds-measure v0.2.0 // indirect
 	github.com/ipfs/go-fetcher v1.6.1 // indirect
 	github.com/ipfs/go-filestore v0.1.0 // indirect
@@ -80,9 +93,7 @@ require (
 	github.com/ipfs/go-ipfs v0.11.0 // indirect
 	github.com/ipfs/go-ipfs-api v0.3.0 // indirect
 	github.com/ipfs/go-ipfs-blockstore v0.2.1 // indirect
-	github.com/ipfs/go-ipfs-chunker v0.0.5 // indirect
 	github.com/ipfs/go-ipfs-cmds v0.6.0 // indirect
-	github.com/ipfs/go-ipfs-config v0.18.0 // indirect
 	github.com/ipfs/go-ipfs-delay v0.0.1 // indirect
 	github.com/ipfs/go-ipfs-ds-help v0.1.1 // indirect
 	github.com/ipfs/go-ipfs-exchange-interface v0.1.0 // indirect
@@ -101,7 +112,7 @@ require (
 	github.com/ipfs/go-ipld-legacy v0.1.0 // indirect
 	github.com/ipfs/go-ipns v0.1.2 // indirect
 	github.com/ipfs/go-log v1.0.5 // indirect
-	github.com/ipfs/go-log/v2 v2.4.0 // indirect
+	github.com/ipfs/go-log/v2 v2.5.0 // indirect
 	github.com/ipfs/go-merkledag v0.5.1 // indirect
 	github.com/ipfs/go-metrics-interface v0.0.1 // indirect
 	github.com/ipfs/go-mfs v0.2.1 // indirect
@@ -179,6 +190,7 @@ require (
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.4 // indirect
+	github.com/mattn/go-sqlite3 v1.14.11 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/miekg/dns v1.1.43 // indirect
@@ -190,7 +202,6 @@ require (
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/multiformats/go-base32 v0.0.3 // indirect
 	github.com/multiformats/go-base36 v0.1.0 // indirect
-	github.com/multiformats/go-multiaddr v0.5.0 // indirect
 	github.com/multiformats/go-multiaddr-dns v0.3.1 // indirect
 	github.com/multiformats/go-multiaddr-fmt v0.1.0 // indirect
 	github.com/multiformats/go-multibase v0.0.3 // indirect
@@ -210,7 +221,6 @@ require (
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/spacemonkeygo/spacelog v0.0.0-20180420211403-2296661a0572 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
-	github.com/syndtr/goleveldb v1.0.0 // indirect
 	github.com/whyrusleeping/base32 v0.0.0-20170828182744-c30ac30633cc // indirect
 	github.com/whyrusleeping/cbor-gen v0.0.0-20210219115102-f37d292932f2 // indirect
 	github.com/whyrusleeping/chunker v0.0.0-20181014151217-fe64bd25879f // indirect

@@ -2,10 +2,14 @@ package labs
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"path/filepath"
 	"sync"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/pkg/errors"
 	"go.uber.org/multierr"
@@ -27,12 +31,18 @@ func NewLabs(config *Config) (*Labs, error) {
 	}
 	logger = logger.Named("labs")
 
+	logger.Info("starting lab", zap.Any("config", config), zap.Any("modules-count", len(modules)))
+
+	grpcLogger := logger.Named("grpc")
+	grpc_zap.ReplaceGrpcLoggerV2(grpcLogger)
+
 	htmlModules := config.HTMLModules
+	htmlModsServerAddr := config.HTMLModulesAddr
 
 	moduleMutex := new(sync.Mutex)
 	module := ""
 	staticSrv := http.Server{
-		Addr: "127.0.0.1:9316",
+		Addr: htmlModsServerAddr,
 		Handler: http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 			moduleName := r.Header.Get("X-Labs-Module")
 			moduleMutex.Lock()
@@ -50,45 +60,80 @@ func NewLabs(config *Config) (*Labs, error) {
 			http.FileServer(http.Dir(filepath.Join(htmlModules, moduleName))).ServeHTTP(rw, r)
 		}),
 	}
-
 	go func() {
 		if err := staticSrv.ListenAndServe(); err != nil {
 			logger.Error("grpc server listener died", zap.Error(err))
 		}
 	}()
+	logger.Info("started HTML modules server", zap.String("addr", htmlModsServerAddr))
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc_middleware.WithUnaryServerChain(
+			grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+			grpc_zap.UnaryServerInterceptor(grpcLogger),
+		),
+		grpc_middleware.WithStreamServerChain(
+			grpc_ctxtags.StreamServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+			grpc_zap.StreamServerInterceptor(grpcLogger),
+		),
+	)
 	cleaners := make([]func() error, len(servers))
 	for i, def := range servers {
-		clean, err := def.register(grpcServer, logger.Named(def.name))
+		clean, err := def.register(grpcServer, logger.Named(def.Name))
 		if err != nil {
-			return nil, errors.Wrap(err, fmt.Sprintf("start %s service", def.name))
+			return nil, errors.Wrap(err, fmt.Sprintf("start %s service", def.Name))
 		}
 		cleaners[len(servers)-(i+1)] = clean
 	}
+	logger.Info("registered grpc services", zap.Int("count", len(servers)), zap.Any("defs", servers))
 
-	wrappedGrpc := grpcweb.WrapServer(grpcServer, grpcweb.WithWebsockets(true))
-	http.HandleFunc("/", wrappedGrpc.ServeHTTP)
-	go func() {
-		if err := http.ListenAndServe(config.Address, nil); err != nil {
-			logger.Error("grpc server listener died", zap.Error(err))
+	var closeGRPCWeb func() error
+	if config.GRPCWebAddr != "" {
+		logger.Info("using GRPCWeb server")
+		wrappedGrpc := grpcweb.WrapServer(grpcServer, grpcweb.WithWebsockets(true))
+		srv := http.Server{
+			Addr:    config.GRPCWebAddr,
+			Handler: http.HandlerFunc(wrappedGrpc.ServeHTTP),
 		}
-	}()
-
-	clean := func() error {
-		grpcServer.GracefulStop()
-		var err error
-		for _, clean := range cleaners {
-			err = multierr.Append(err, clean())
-		}
-		return err
+		closeGRPCWeb = srv.Close
+		go func() {
+			if err := srv.ListenAndServe(); err != nil {
+				logger.Error("grpc server listener died", zap.Error(err))
+			}
+		}()
+		logger.Info("GRPCWeb listening", zap.String("addr", config.GRPCWebAddr))
 	}
 
-	return &Labs{
+	if config.GRPCAddr != "" {
+		lis, err := net.Listen("tcp", config.GRPCAddr)
+		if err != nil {
+			panic(errors.Wrap(err, "grpc listen"))
+		}
+		go func() {
+			if err := grpcServer.Serve(lis); err != nil {
+				logger.Error("grpc server listener died", zap.Error(err))
+			}
+		}()
+		logger.Info("GRPC listening", zap.String("addr", config.GRPCAddr))
+	}
+
+	lab := &Labs{
 		logger: logger,
-		clean:  clean,
 		mutex:  new(sync.Mutex),
-	}, nil
+		clean: func() error {
+			grpcServer.GracefulStop()
+			var err error
+			if closeGRPCWeb != nil {
+				err = multierr.Append(err, closeGRPCWeb())
+			}
+			for _, clean := range cleaners {
+				err = multierr.Append(err, clean())
+			}
+			return err
+		},
+	}
+	logger.Info("lab started")
+	return lab, nil
 }
 
 func (b *Labs) Close() error {

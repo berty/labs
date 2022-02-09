@@ -1,5 +1,5 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, ViewStyle } from 'react-native'
+import React, { useEffect, useRef } from 'react'
+import { View, Text, TouchableOpacity, ViewStyle, Animated, Easing } from 'react-native'
 import { TextDecoder } from 'text-encoding'
 import * as FileSystem from 'expo-file-system'
 
@@ -7,8 +7,10 @@ import { IPFSIcon } from '@berty-labs/assets'
 import { defaultColors } from '@berty-labs/styles'
 import { useAppNavigation } from '@berty-labs/navigation'
 import { useAsyncTransform } from '@berty-labs/reactutil'
-import { useLabsModulesClient } from '@berty-labs/react-redux'
+import { useAppSelector, useLabsModulesClient } from '@berty-labs/react-redux'
 import { blmod } from '@berty-labs/api'
+import { selectModuleState } from '@berty-labs/redux'
+import { grpc } from '@improbable-eng/grpc-web'
 
 type ToolItemParams = {
 	title: string
@@ -82,13 +84,57 @@ type Module = {
 	infoError?: unknown
 }
 
+const maxOpacity = 1
+const animDuration = 1000
+
+const GoModuleAvatar: React.FC<{ name: string; icon: string }> = React.memo(({ name, icon }) => {
+	const { state } = useAppSelector(state => selectModuleState(state, name))
+	const fadeAnim = useRef(new Animated.Value(maxOpacity)).current
+	useEffect(() => {
+		if (state !== 'running') {
+			return
+		}
+		const anim = Animated.loop(
+			Animated.sequence([
+				Animated.timing(fadeAnim, {
+					toValue: 0.3,
+					duration: animDuration / 2,
+					easing: Easing.linear,
+					useNativeDriver: true,
+				}),
+				Animated.timing(fadeAnim, {
+					toValue: maxOpacity,
+					duration: animDuration / 2,
+					easing: Easing.linear,
+					useNativeDriver: true,
+				}),
+			]),
+		)
+		anim.start()
+		return () => anim.reset()
+	}, [fadeAnim, state])
+	return (
+		<Animated.View style={[utfIconContainerStyle, { opacity: fadeAnim }]}>
+			<Text style={utfIconStyle}>{icon}</Text>
+		</Animated.View>
+	)
+})
+
 export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchText }) => {
 	const { navigate } = useAppNavigation()
 	const modulesClient = useLabsModulesClient()
 
-	const [goModules] = useAsyncTransform(async () => {
-		const reply = await modulesClient?.AllModules({})
-		return reply?.modules
+	const [goModules] = useAsyncTransform(() => {
+		const req = new blmod.AllModulesRequest()
+		return new Promise<blmod.ModuleInfo[]>((resolve, reject) =>
+			modulesClient?.allModules(req, new grpc.Metadata(), (err, reply) => {
+				if (err) {
+					reject(err)
+				} else {
+					resolve(reply?.getModulesList() || [])
+				}
+			}),
+		)
 	}, [modulesClient])
 
 	const [htmlMods] = useAsyncTransform(async () => {
@@ -116,14 +162,14 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 	const items = React.useMemo<ToolItemParams[]>(() => {
 		return [
 			{
-				key: 'ipfs-web-ui',
+				key: 'rn-ipfs-web-ui',
 				title: 'IPFS Web Interface',
 				desc: 'Inspect IPFS node and network',
 				onPress: () => navigate('IPFSWebUI'),
 				avatar: <IPFSIcon width={iconsSize} height={iconsSize} />,
 			},
 			{
-				key: 'ipfs-node-manager',
+				key: 'rn-ipfs-node-manager',
 				title: 'IPFS Node Manager',
 				desc: 'Configure and select IPFS nodes',
 				onPress: () => navigate('NodeManager'),
@@ -134,7 +180,7 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 				),
 			},
 			{
-				key: 'labs-services-health',
+				key: 'rn-labs-services-health',
 				title: 'Services Health',
 				desc: 'Check embedded services health',
 				onPress: () => navigate('ServicesHealth'),
@@ -145,7 +191,7 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 				),
 			},
 			{
-				key: 'p2p-browser',
+				key: 'rn-p2p-browser',
 				title: 'P2P Browser',
 				desc: 'P2P-enabled browser',
 				onPress: () => navigate('Browser'),
@@ -156,7 +202,7 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 				),
 			},
 			{
-				key: 'ipfs-node-logs',
+				key: 'rn-ipfs-node-logs',
 				title: 'IPFS Node Logs',
 				desc: 'View active IPFS node logs',
 				onPress: () => navigate('IPFSLogs'),
@@ -172,7 +218,7 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 					avatarText = modInfo.iconUTF
 				}
 				return {
-					key: modInfo.name,
+					key: 'html-' + modInfo.name,
 					title: modInfo.displayName || 'HTML Module',
 					desc: modInfo.shortDescription || '',
 					onPress: () =>
@@ -186,10 +232,15 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 			}),
 			...(goModules || []).map(mod => {
 				let icon = 'G'
-				if (mod.iconKind === blmod.ModuleInfo_IconKind.ICON_KIND_UTF && mod.iconData.length) {
+				const iconData = mod.getIconData()
+				if (
+					mod.getIconKind() === blmod.ModuleInfo.IconKind.ICON_KIND_UTF &&
+					typeof iconData !== 'string' &&
+					iconData.length
+				) {
 					try {
 						const utf8Decoder = new TextDecoder('utf-8')
-						const modIcon = utf8Decoder.decode(mod.iconData)
+						const modIcon = utf8Decoder.decode(iconData)
 						if (modIcon) {
 							icon = modIcon
 						}
@@ -198,19 +249,16 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 					}
 				}
 				return {
-					key: mod.name,
-					title: mod.displayName,
-					desc: mod.shortDescription,
-					onPress: () => navigate('GoModule', { name: mod.name, displayName: mod.displayName }),
-					avatar: (
-						<View style={utfIconContainerStyle}>
-							<Text style={utfIconStyle}>{icon}</Text>
-						</View>
-					),
+					key: mod.getName(),
+					title: mod.getDisplayName(),
+					desc: mod.getShortDescription(),
+					onPress: () =>
+						navigate('GoModule', { name: mod.getName(), displayName: mod.getDisplayName() }),
+					avatar: <GoModuleAvatar name={mod.getName()} icon={icon} />,
 				}
 			}),
 			{
-				key: 'ipfs-gateways-race',
+				key: 'rn-ipfs-gateways-race',
 				title: 'Gateways Race',
 				desc: 'Run race between gomobile and pinata',
 				onPress: () => navigate('GatewaysRace'),
@@ -221,7 +269,7 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 				),
 			},
 			{
-				key: 'art-collection',
+				key: 'rn-art-collection',
 				title: 'Art Collection',
 				desc: 'Browse an art collection',
 				onPress: () => navigate('ArtCollection'),

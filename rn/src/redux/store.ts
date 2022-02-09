@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import ipfsRootReducer, { ipfsSliceName } from './reducers/ipfs.reducer'
 import ipfsVolatileRootReducer from './reducers/ipfsVolatile.reducer'
 import onboardingRootReducer, { onboardingSliceName } from './reducers/onboarding.reducer'
+import goModulesReducer from './reducers/goModules.reducer'
 
 const persistConfig = {
 	key: 'persistStore',
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
 	...onboardingRootReducer,
 	...ipfsRootReducer,
 	...ipfsVolatileRootReducer,
+	...goModulesReducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

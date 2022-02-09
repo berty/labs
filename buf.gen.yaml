@@ -8,10 +8,13 @@ plugins:
     out: .
     opt:
       - module=berty.tech/labs
+  - name: js
+    out: rn/src/api
+    opt:
+      - import_style=commonjs
+      - binary
   - name: ts
     out: rn/src/api
-    strategy: all
-    path: rn/node_modules/ts-proto/protoc-gen-ts_proto
+    path: rn/node_modules/.bin/protoc-gen-ts
     opt:
-      - esModuleInterop=true
-      - outputClientImpl=grpc-web
+      - service=grpc-web

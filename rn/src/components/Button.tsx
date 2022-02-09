@@ -1,5 +1,11 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, GestureResponderEvent } from 'react-native'
+import {
+	View,
+	Text,
+	TouchableOpacity,
+	GestureResponderEvent,
+	ActivityIndicator,
+} from 'react-native'
 
 import { defaultColors } from '@berty-labs/styles'
 
@@ -7,6 +13,7 @@ export type ButtonParams = {
 	title: string
 	shrink?: boolean
 	onPress?: (event: GestureResponderEvent) => void
+	loading?: boolean
 } & TouchableOpacity['props']
 
 export const Button: React.FC<ButtonParams> = ({
@@ -15,6 +22,7 @@ export const Button: React.FC<ButtonParams> = ({
 	style,
 	disabled,
 	shrink,
+	loading,
 	...otherProps
 }) => {
 	return (
@@ -26,6 +34,7 @@ export const Button: React.FC<ButtonParams> = ({
 						alignItems: 'center',
 						justifyContent: 'center',
 						backgroundColor: disabled ? defaultColors.grey : defaultColors.blue,
+						flexDirection: 'row',
 						borderRadius: 6,
 						paddingVertical: 15,
 						paddingHorizontal: 20,
@@ -36,6 +45,7 @@ export const Button: React.FC<ButtonParams> = ({
 				disabled={disabled}
 				{...otherProps}
 			>
+				{!!loading && <ActivityIndicator size={16} style={{ marginRight: 15 }} />}
 				<Text
 					style={{
 						color: defaultColors.text,
