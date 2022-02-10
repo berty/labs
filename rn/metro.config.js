@@ -5,6 +5,17 @@
  * @format
  */
 
+const blacklist = require('metro-config/src/defaults/exclusionList')
+const path = require('path')
+
+const ignoreTopLevelFolders = [
+	'ios',
+	'html-mods.bundle',
+	'html-mods',
+	'node_modules/@types/node',
+	// add more top level folders here
+].map(f => new RegExp(`${path.resolve(f)}/.*`))
+
 const defaultAssetExts = require('metro-config/src/defaults/defaults').assetExts
 const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts
 
@@ -21,5 +32,6 @@ module.exports = {
 	resolver: {
 		assetExts: defaultAssetExts.filter(ext => ext !== 'svg'),
 		sourceExts: [...defaultSourceExts, 'svg'],
+		blacklistRE: blacklist(ignoreTopLevelFolders),
 	},
 }

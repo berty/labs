@@ -151,10 +151,3 @@ func (b *Labs) Close() error {
 	}
 	return nil
 }
-
-func safeLogger(l *zap.Logger) *zap.Logger {
-	if l == nil {
-		l = zap.NewNop()
-	}
-	return l
-}

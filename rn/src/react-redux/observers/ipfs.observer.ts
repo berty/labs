@@ -49,7 +49,7 @@ const startNode = async (
 		}
 		const apiMaddrs = startNodeReply.getApiMaddrsList()
 		if (apiMaddrs.length < 1) {
-			throw new Error('missing gateway address')
+			throw new Error('missing api address')
 		}
 		const gaParts = gaMaddrs[0].split('/')
 		const gatewayURL = `http://${gaParts[2]}:${gaParts[4]}`

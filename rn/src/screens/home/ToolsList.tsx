@@ -11,6 +11,7 @@ import { useAppSelector, useLabsModulesClient } from '@berty-labs/react-redux'
 import { blmod } from '@berty-labs/api'
 import { selectModuleState } from '@berty-labs/redux'
 import { grpcPromise } from '@berty-labs/grpcutil'
+import { base64 } from '@berty-labs/encoding'
 
 type ToolItemParams = {
 	title: string
@@ -75,7 +76,7 @@ const utfIconContainerStyle: ViewStyle = {
 const amap = <I, O>(items: I[], transform: (item: I) => Promise<O>) =>
 	Promise.all(items.map(transform))
 
-type Module = {
+type HTMLModule = {
 	name: string
 	displayName?: string
 	shortDescription?: string
@@ -142,11 +143,27 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 				const jsonData = await FileSystem.readAsStringAsync(
 					`${FileSystem.bundleDirectory}html-mods.bundle/${mod}/info.json`,
 				)
-				const info: Module = JSON.parse(jsonData)
-				info.name = mod
+				let iconUTF = 'H'
+				const pbInfo: blmod.ModuleInfo.AsObject = JSON.parse(jsonData)
+				if (pbInfo.iconKind !== blmod.ModuleInfo.IconKind.ICON_KIND_UTF) {
+					console.warn('only utf icon supported')
+				} else {
+					let data = pbInfo.iconData
+					if (typeof data === 'string') {
+						data = base64.encode(data)
+					}
+					iconUTF = new TextDecoder().decode(data)
+				}
+				const info: HTMLModule = {
+					name: mod,
+					displayName: pbInfo.displayName,
+					shortDescription: pbInfo.shortDescription,
+					iconKind: 'UTF',
+					iconUTF,
+				}
 				return info
 			} catch (err) {
-				const info: Module = { name: mod, infoError: err }
+				const info: HTMLModule = { name: mod, infoError: err }
 				return info
 			}
 		})
@@ -230,7 +247,9 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 				if (mod.getIconKind() === blmod.ModuleInfo.IconKind.ICON_KIND_UTF) {
 					try {
 						const utf8Decoder = new TextDecoder('utf-8')
+						console.log('decoding', mod.getIconData())
 						const modIcon = utf8Decoder.decode(mod.getIconData_asU8())
+						console.log('icon', modIcon)
 						if (modIcon) {
 							icon = modIcon
 						}

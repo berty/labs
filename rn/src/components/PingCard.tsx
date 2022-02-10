@@ -48,11 +48,13 @@ export type PingOpts = {
 	allowedStatuses?: number[]
 }
 
+const defaultAllowedStatuses = [200]
+
 export const PingCard: React.FC<
 	{
 		style?: ViewStyle
 	} & PingOpts
-> = ({ style, name, address, opts, allowedStatuses = [200] }) => {
+> = ({ style, name, address, opts, allowedStatuses = defaultAllowedStatuses }) => {
 	const acRef = React.useRef<AbortController>()
 
 	const [state, setState] = React.useState<ServiceStatus>({
@@ -76,7 +78,6 @@ export const PingCard: React.FC<
 			})
 			try {
 				const reply = await fetch(address, { ...opts, signal: ac.signal })
-				console.log(name, 'ping status:', reply.status)
 				if (ac.signal.aborted) {
 					return
 				}
@@ -105,7 +106,7 @@ export const PingCard: React.FC<
 			}
 		}
 		start()
-	}, [address, name, allowedStatuses, opts])
+	}, [address, allowedStatuses, opts])
 
 	useMountEffect(() => {
 		refresh()

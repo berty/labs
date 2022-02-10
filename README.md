@@ -28,7 +28,7 @@ TODO
 
 ## Getting Started
 
-TODO
+See [Modules](#modules) if you don't want to dive into the code
 
 ### Troubleshooting
 
@@ -36,11 +36,72 @@ _(please use [issues](https://github.com/berty/REPLACEME))_
 
 ## Development
 
-TODO
+If you want to quickly try native mobile IPFS without writing any go, make an [HTML module](#html-module)
 
 ### Architecture
 
-TODO
+TODO: Explain modules architecture
+
+## Modules<a id='modules'></a>
+
+Modules are automatically added to the home tool list in the app
+
+They allow you to run custom Go or JavaScript and programatically access a Gomobile-IPFS backed IPFS shell on mobile very quickly
+
+You don't need to know JavaScript to create or run a Go module and you don't need to know Go to create or run a JavaScript module
+
+### HTML<a id='html-module'></a>
+
+HTML modules in a nutshell:
+- Living at `rn/html-mods/`
+- Statically served at the root of a Go `http.FileServer` started automatically by the Labs bridge
+- Accessed with a `react-native-webview` pointed at the embedded static server (the `rn/src/screens/HTMLModule.tsx` screen)
+- If the build of an HTML module fails, it will be skipped and building the app will continue
+
+Create a new Labs HTML module by running
+
+```sh
+cd rn
+make create-module
+```
+
+And choosing one of `bare`, `git` or `react`
+
+It will ask you a few questions and create the module boilerplate, every step is logged so you can understand what is going on
+
+If you choose the `react` preset, you can use the dev-server from mobile with the `Browser` Labs tool
+
+Or:
+- Create a directory at `rn/html-mods/<your-module-name>`
+- Add a Makefile at `rn/html-mods/<your-module-name>/Makefile` with the first rule creating:
+  - The `rn/html-mods.bundle/<your-module-name>/index.html` root site file
+  - The `rn/html-mods.bundle/<your-module-name>/info.json` file containing a JSON representation of the `blmod.ModuleInfo` type
+
+### Go
+
+Go modules in a nutshell:
+- Living at `go/mod/`
+- Need to be registered in `go/bind/labs/modules.go` which can be done automatically by running `make generate`
+- Accessed with a generic UI that allows to run them, cancel runs and view their output (the `rn/src/screens/GoModule.tsx` screen)
+- If the build of a registered Go module fails, it will abort building the app
+
+Create a new Labs Go module by running
+
+```sh
+cd rn
+make create-module
+```
+
+And choosing `go` as preset
+
+Or:
+- Create a Go module at `go/mod/<your-module-name>`
+- Implement the `berty.tech/labs/go/pkg/blmod.Module` interface
+- Register the module in `go/bind/labs/modules.go`
+
+To develop a Go module faster, you can:
+- `go run ./go/cmd/daemon` to spawn a CLI Labs instance
+- `go run ./go/cmd/client` to access the modules with a CLI
 
 ### Testing
 

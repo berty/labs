@@ -12,6 +12,7 @@ require (
 	github.com/ipfs/go-ds-flatfs v0.5.1
 	github.com/ipfs/go-ds-leveldb v0.5.0
 	github.com/ipfs/go-ds-sql v0.3.0
+	github.com/ipfs/go-ipfs-api v0.3.0
 	github.com/ipfs/go-ipfs-chunker v0.0.5
 	github.com/ipfs/go-ipfs-config v0.18.0
 	github.com/multiformats/go-multiaddr v0.5.0
@@ -91,7 +92,6 @@ require (
 	github.com/ipfs/go-fs-lock v0.0.7 // indirect
 	github.com/ipfs/go-graphsync v0.11.0 // indirect
 	github.com/ipfs/go-ipfs v0.11.0 // indirect
-	github.com/ipfs/go-ipfs-api v0.3.0 // indirect
 	github.com/ipfs/go-ipfs-blockstore v0.2.1 // indirect
 	github.com/ipfs/go-ipfs-cmds v0.6.0 // indirect
 	github.com/ipfs/go-ipfs-delay v0.0.1 // indirect
@@ -256,3 +256,5 @@ require (
 	lukechampine.com/blake3 v1.1.6 // indirect
 	nhooyr.io/websocket v1.8.6 // indirect
 )
+
+replace golang.org/x/mobile => github.com/aeddi/mobile v0.0.3-silicon

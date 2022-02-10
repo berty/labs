@@ -294,7 +294,7 @@ export const adjectives = [
 	'avaricious',
 	'avocado',
 	'awake',
-	'awsome',
+	'awesome',
 	'backstage',
 	'backwoods',
 	'balding',

@@ -24,7 +24,7 @@ html-mods=$(wildcard html-mods/*)
 
 html-mods.all:
 	mkdir -p html-mods.bundle
-	@for mod in $(html-mods); do echo "--- Making HTML module $$(basename $$mod) ---"; make -C $$mod; done
+	@for mod in $(html-mods); do echo "--- Making HTML module $$(basename $$mod) ---"; SKIP_PREFLIGHT_CHECK=true make -C $$mod; done
 	@echo --- Done making HTML modules ---
 .PHONY: html-mods.all
 
@@ -38,11 +38,14 @@ ios: node_modules/.mkt ios/Pods/.mkt html-mods.all
 	$(IOS_RN_FLAGS)
 
 $(IOS_CORE): ../go.mod ../go.sum $(shell find ../go -name '*.go')
-	$(GO) mod download
-	$(GO) install golang.org/x/mobile/cmd/gomobile
-	$(GO) install golang.org/x/mobile/cmd/gobind
 	$(GO) run golang.org/x/mobile/cmd/gomobile init -v
-	$(GO) run golang.org/x/mobile/cmd/gomobile bind $(GOMOBILE_OPT) -v -target=ios,iossimulator -o $(IOS_CORE) $(CORE_PACKAGE)
+	CGO_CPPFLAGS=-DHAVE_GETHOSTUUID=0 $(GO) run golang.org/x/mobile/cmd/gomobile bind \
+		$(GOMOBILE_OPT) \
+		-v \
+		-target=ios \
+		-o $(IOS_CORE) \
+		-cache "$(PWD)/ios/.gomobile-cache/labs" \
+		$(CORE_PACKAGE)
 
 .link:
 	cd react-native-labs-bridge && yarn link
@@ -95,6 +98,11 @@ lint.fix: node_modules/.mkt
 .PHONY: metro.start
 metro.start: node_modules/.mkt
 	npx react-native start --port=$(METRO_RN_PORT)
+
+
+.PHONY: create-module
+create-module: node_modules/.mkt
+	SKIP_PREFLIGHT_CHECK=true npx ts-node -TH --files ./src/create-mod
 
 .PHONY: clean
 clean:
