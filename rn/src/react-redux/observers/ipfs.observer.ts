@@ -9,7 +9,7 @@ import { randomCarretName } from '@berty-labs/reactutil'
 import { store } from '@berty-labs/redux'
 import { ipfsman } from '@berty-labs/api'
 import { ipfsRepoPath } from '@berty-labs/ipfsutil'
-import { grpc } from '@improbable-eng/grpc-web'
+import { grpcPromise } from '@berty-labs/grpcutil'
 
 const ipfsNodes: { [key: string]: string | undefined } = {}
 
@@ -29,17 +29,10 @@ const startNode = async (
 		console.log('starting ipfs node', nextNode)
 		const req = new ipfsman.StartNodeRequest()
 		req.setRepoPath(ipfsRepoPath(nextNode))
-		const startNodeReply = await new Promise<ipfsman.StartNodeResponse>((resolve, reject) =>
-			client.startNode(req, new grpc.Metadata(), (err, reply) => {
-				if (err) {
-					reject(err)
-				} else if (!reply) {
-					reject(new Error('emply reply'))
-				} else {
-					resolve(reply)
-				}
-			}),
-		)
+		const startNodeReply = await grpcPromise(client, 'startNode', req)
+		if (!startNodeReply) {
+			throw new Error('emply reply')
+		}
 		console.log('started ipfs node', nextNode)
 		ipfs = startNodeReply.getId()
 		state = 'started'
@@ -68,14 +61,14 @@ const startNode = async (
 		console.warn('failed to fully start ipfs node', nextNode, err)
 		if (ipfs && state === 'started') {
 			console.log('stopping ipfs node', nextNode)
-			const req = new ipfsman.StopNodeRequest()
-			req.setId(nextNode)
-			client.stopNode(req, new grpc.Metadata(), err => {
-				if (err) {
-					console.warn('failed to stop node:', err)
-				}
-				stor.dispatch(ipfsNodeStopped(nextNode))
-			})
+			try {
+				const req = new ipfsman.StopNodeRequest()
+				req.setId(nextNode)
+				await grpcPromise(client, 'stopNode', req)
+			} catch (err) {
+				console.warn('failed to stop node:', err)
+			}
+			stor.dispatch(ipfsNodeStopped(nextNode))
 		}
 	}
 }
@@ -93,12 +86,12 @@ const stopNode = async (
 	console.log('stopping ipfs node', nodeName)
 	const req = new ipfsman.StopNodeRequest()
 	req.setId(node)
-	client.stopNode(req, new grpc.Metadata(), err => {
-		if (err) {
-			console.warn('failed to stop node:', err)
-		}
-		stor.dispatch(ipfsNodeStopped(nodeName))
-	})
+	try {
+		await grpcPromise(client, 'stopNode', req)
+	} catch (err) {
+		console.warn('failed to stop node:', err)
+	}
+	stor.dispatch(ipfsNodeStopped(nodeName))
 }
 
 export const observeIPFS = (client: ipfsman.IPFSManagerServiceClient) => {

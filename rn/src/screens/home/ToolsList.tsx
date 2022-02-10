@@ -10,7 +10,7 @@ import { useAsyncTransform } from '@berty-labs/reactutil'
 import { useAppSelector, useLabsModulesClient } from '@berty-labs/react-redux'
 import { blmod } from '@berty-labs/api'
 import { selectModuleState } from '@berty-labs/redux'
-import { grpc } from '@improbable-eng/grpc-web'
+import { grpcPromise } from '@berty-labs/grpcutil'
 
 type ToolItemParams = {
 	title: string
@@ -124,17 +124,12 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 	const { navigate } = useAppNavigation()
 	const modulesClient = useLabsModulesClient()
 
-	const [goModules] = useAsyncTransform(() => {
-		const req = new blmod.AllModulesRequest()
-		return new Promise<blmod.ModuleInfo[]>((resolve, reject) =>
-			modulesClient?.allModules(req, new grpc.Metadata(), (err, reply) => {
-				if (err) {
-					reject(err)
-				} else {
-					resolve(reply?.getModulesList() || [])
-				}
-			}),
-		)
+	const [goModules] = useAsyncTransform(async () => {
+		if (!modulesClient) {
+			return
+		}
+		const mods = await grpcPromise(modulesClient, 'allModules', new blmod.AllModulesRequest())
+		return mods?.getModulesList()
 	}, [modulesClient])
 
 	const [htmlMods] = useAsyncTransform(async () => {
@@ -232,15 +227,10 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 			}),
 			...(goModules || []).map(mod => {
 				let icon = 'G'
-				const iconData = mod.getIconData()
-				if (
-					mod.getIconKind() === blmod.ModuleInfo.IconKind.ICON_KIND_UTF &&
-					typeof iconData !== 'string' &&
-					iconData.length
-				) {
+				if (mod.getIconKind() === blmod.ModuleInfo.IconKind.ICON_KIND_UTF) {
 					try {
 						const utf8Decoder = new TextDecoder('utf-8')
-						const modIcon = utf8Decoder.decode(iconData)
+						const modIcon = utf8Decoder.decode(mod.getIconData_asU8())
 						if (modIcon) {
 							icon = modIcon
 						}
