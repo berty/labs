@@ -10,7 +10,8 @@ import { useAsyncTransform } from '@berty-labs/reactutil'
 import { useAppSelector, useLabsModulesClient } from '@berty-labs/react-redux'
 import { blmod } from '@berty-labs/api'
 import { selectModuleState } from '@berty-labs/redux'
-import { grpc } from '@improbable-eng/grpc-web'
+import { grpcPromise } from '@berty-labs/grpcutil'
+import { base64 } from '@berty-labs/encoding'
 
 type ToolItemParams = {
 	title: string
@@ -75,7 +76,7 @@ const utfIconContainerStyle: ViewStyle = {
 const amap = <I, O>(items: I[], transform: (item: I) => Promise<O>) =>
 	Promise.all(items.map(transform))
 
-type Module = {
+type HTMLModule = {
 	name: string
 	displayName?: string
 	shortDescription?: string
@@ -124,17 +125,12 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 	const { navigate } = useAppNavigation()
 	const modulesClient = useLabsModulesClient()
 
-	const [goModules] = useAsyncTransform(() => {
-		const req = new blmod.AllModulesRequest()
-		return new Promise<blmod.ModuleInfo[]>((resolve, reject) =>
-			modulesClient?.allModules(req, new grpc.Metadata(), (err, reply) => {
-				if (err) {
-					reject(err)
-				} else {
-					resolve(reply?.getModulesList() || [])
-				}
-			}),
-		)
+	const [goModules] = useAsyncTransform(async () => {
+		if (!modulesClient) {
+			return
+		}
+		const mods = await grpcPromise(modulesClient, 'allModules', new blmod.AllModulesRequest())
+		return mods?.getModulesList()
 	}, [modulesClient])
 
 	const [htmlMods] = useAsyncTransform(async () => {
@@ -147,11 +143,27 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 				const jsonData = await FileSystem.readAsStringAsync(
 					`${FileSystem.bundleDirectory}html-mods.bundle/${mod}/info.json`,
 				)
-				const info: Module = JSON.parse(jsonData)
-				info.name = mod
+				let iconUTF = 'H'
+				const pbInfo: blmod.ModuleInfo.AsObject = JSON.parse(jsonData)
+				if (pbInfo.iconKind !== blmod.ModuleInfo.IconKind.ICON_KIND_UTF) {
+					console.warn('only utf icon supported')
+				} else {
+					let data = pbInfo.iconData
+					if (typeof data === 'string') {
+						data = base64.encode(data)
+					}
+					iconUTF = new TextDecoder().decode(data)
+				}
+				const info: HTMLModule = {
+					name: mod,
+					displayName: pbInfo.displayName,
+					shortDescription: pbInfo.shortDescription,
+					iconKind: 'UTF',
+					iconUTF,
+				}
 				return info
 			} catch (err) {
-				const info: Module = { name: mod, infoError: err }
+				const info: HTMLModule = { name: mod, infoError: err }
 				return info
 			}
 		})
@@ -232,15 +244,12 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 			}),
 			...(goModules || []).map(mod => {
 				let icon = 'G'
-				const iconData = mod.getIconData()
-				if (
-					mod.getIconKind() === blmod.ModuleInfo.IconKind.ICON_KIND_UTF &&
-					typeof iconData !== 'string' &&
-					iconData.length
-				) {
+				if (mod.getIconKind() === blmod.ModuleInfo.IconKind.ICON_KIND_UTF) {
 					try {
 						const utf8Decoder = new TextDecoder('utf-8')
-						const modIcon = utf8Decoder.decode(iconData)
+						console.log('decoding', mod.getIconData())
+						const modIcon = utf8Decoder.decode(mod.getIconData_asU8())
+						console.log('icon', modIcon)
 						if (modIcon) {
 							icon = modIcon
 						}

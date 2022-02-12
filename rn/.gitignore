@@ -74,3 +74,5 @@ android/app/gradlew.bat
 /ios/vendored_pods/
 /react-native-labs-bridge/ios/Labsbridge.xcframework
 /html-mods.bundle
+/html-mods/*/repo
+.gomobile-cache

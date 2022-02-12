@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react'
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'
-import { TextDecoder, TextEncoder } from 'text-encoding'
 
 import { ScreenFC, useAppNavigation } from '@berty-labs/navigation'
 import { useAppDispatch, useAppSelector, useLabsModulesClient } from '@berty-labs/react-redux'
@@ -15,11 +14,9 @@ import {
 	selectModuleState,
 	setModuleArgs,
 } from '@berty-labs/redux'
+import { utf8 } from '@berty-labs/encoding'
 
 const space = 15
-
-const utf8Decoder = new TextDecoder('utf-8')
-const utf8Encoder = new TextEncoder()
 
 const streams: { [key: string]: blmod.ResponseStream<blmod.RunModuleResponse> | undefined } = {}
 
@@ -45,14 +42,14 @@ export const GoModule: ScreenFC<'GoModule'> = ({
 		const req = new blmod.RunModuleRequest()
 		req.setName(name)
 		if (args) {
-			req.setArgs(utf8Encoder.encode(args))
+			req.setArgs(utf8.encode(args))
 		}
 
 		const cl = modulesClient.runModule(req)
 		streams[name] = cl
 
 		cl.on('data', reply => {
-			const str = utf8Decoder.decode(reply.getPayload_asU8())
+			const str = utf8.decode(reply.getPayload_asU8())
 			let text = ''
 			try {
 				const obj = JSON.parse(str)

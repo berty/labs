@@ -11,7 +11,9 @@ DIST_DIR=$(REPO_ROOT)/dist
 $(INDEX_HTML): $(REPO_TARGET) $(NODE_MODULES_TARGET) info.json
 	rm -fr $(DIST_DIR)
 	cd $(REPO_ROOT) && npm run build
+	
 	rm -fr $(BUILD_TARGET)
+	mkdir -p $(BUNDLE_ROOT)
 	cp -r $(DIST_DIR) $(BUILD_TARGET)
 	cp info.json $(BUILD_TARGET)/info.json
 

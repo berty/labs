@@ -24,7 +24,7 @@ export const HTMLModule: ScreenFC<'HTMLModule'> = ({
 	}, [nav, displayName])
 
 	if (mobileIPFS.status !== 'up') {
-		return <LoaderScreen text='Waitinng for IPFS node...' />
+		return <LoaderScreen text='Waiting for IPFS node...' />
 	}
 	if (localError) {
 		return (

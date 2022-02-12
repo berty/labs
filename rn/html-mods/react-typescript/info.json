@@ -1,6 +1,6 @@
 {
-    "displayName": "React Example",
-    "shortDescription": "Example React module with TypeScript",
-    "iconKind": "UTF",
-    "iconUTF": "✨"
+    "displayName": "React TypeScript",
+    "iconKind": 1,
+    "iconData": "8J+Uiw==",
+    "shortDescription": "Example React module with TypeScript"
 }

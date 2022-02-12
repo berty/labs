@@ -1,4 +1,4 @@
-NAME=react-typescript
+NAME=<name>
 RN_ROOT=../..
 BUNDLE_ROOT=$(RN_ROOT)/html-mods.bundle
 BUILD_TARGET=$(BUNDLE_ROOT)/$(NAME)

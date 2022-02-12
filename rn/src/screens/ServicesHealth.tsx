@@ -1,39 +1,49 @@
 import React from 'react'
-import { ScrollView, ViewStyle } from 'react-native'
+import { ScrollView } from 'react-native'
 
 import { ScreenFC } from '@berty-labs/navigation'
-import { AppScreenContainer, IPFSServicesHealth } from '@berty-labs/components'
-import { PingCard, PingOpts } from '@berty-labs/components/PingCard'
+import {
+	AppScreenContainer,
+	IPFSAPIHealthCard,
+	IPFSGatewayHealthCard,
+	LoaderCard,
+} from '@berty-labs/components'
+import { PingCard } from '@berty-labs/components/PingCard'
+import { useGomobileIPFS } from '@berty-labs/react-redux'
 
 const space = 15
 
-const cardStyle: ViewStyle = { marginBottom: space }
-
-const items: PingOpts[] = [
-	{
-		name: 'IPFS Node Manager Server',
-		address: 'http://127.0.0.1:9315/ipfsman.v1.IPFSManagerService/Health',
-		allowedStatuses: [500],
-	},
-	{
-		name: 'Go Labs Modules Server',
-		address: 'http://127.0.0.1:9315/blmod.v1.LabsModulesService/Health',
-		allowedStatuses: [500],
-	},
-	/*{
-		name: 'Dead example',
-		address: "http://127.0.0.1:1234",
-	},*/
-]
+const bridgeAllowedStatused = [500]
 
 export const ServicesHealth: ScreenFC<'ServicesHealth'> = () => {
+	const mobileIPFS = useGomobileIPFS()
 	return (
 		<AppScreenContainer>
 			<ScrollView style={{ margin: space }}>
-				{items.map(item => (
-					<PingCard style={cardStyle} key={item.name} {...item} />
-				))}
-				<IPFSServicesHealth style={cardStyle} />
+				<PingCard
+					style={{ marginBottom: space }}
+					{...{
+						name: 'IPFS Node Manager Server',
+						address: 'http://127.0.0.1:9315/ipfsman.v1.IPFSManagerService/Health',
+						allowedStatuses: bridgeAllowedStatused,
+					}}
+				/>
+				<PingCard
+					style={{ marginBottom: space }}
+					{...{
+						name: 'Go Labs Modules Server',
+						address: 'http://127.0.0.1:9315/blmod.v1.LabsModulesService/Health',
+						allowedStatuses: bridgeAllowedStatused,
+					}}
+				/>
+				{mobileIPFS.status === 'up' ? (
+					<>
+						<IPFSAPIHealthCard style={{ marginBottom: space }} />
+						<IPFSGatewayHealthCard />
+					</>
+				) : (
+					<LoaderCard text='Waiting for IPFS node...' />
+				)}
 			</ScrollView>
 		</AppScreenContainer>
 	)

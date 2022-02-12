@@ -14,7 +14,9 @@ import {
 	AppScreenContainer,
 	Button,
 	Card,
-	IPFSServicesHealth,
+	IPFSAPIHealthCard,
+	IPFSGatewayHealthCard,
+	LoaderCard,
 	UseIPFSNodeButton,
 } from '@berty-labs/components'
 import { defaultColors } from '@berty-labs/styles'
@@ -170,7 +172,15 @@ export const NodeConfig: ScreenFC<'NodeConfig'> = ({
 								</Card>
 								{useNodeButton}
 							</View>
-							{isInUse && <IPFSServicesHealth style={{ marginBottom: space }} />}
+							{isInUse && mobileIPFS.status !== 'up' && (
+								<LoaderCard style={{ marginBottom: space }} text='Waiting for IPFS node...' />
+							)}
+							{isInUse && mobileIPFS.status === 'up' && (
+								<>
+									<IPFSAPIHealthCard style={{ marginBottom: space }} />
+									<IPFSGatewayHealthCard style={{ marginBottom: space }} />
+								</>
+							)}
 							<MDNSCard config={config} style={{ marginBottom: space }} />
 							<Card title='Datastores' style={{ marginBottom: space }}>
 								{rootSpec && (

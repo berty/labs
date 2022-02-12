@@ -1,6 +1,6 @@
 {
     "displayName": "IPNS Publish",
     "shortDescription": "Publish to IPNS using JS and Go",
-    "iconKind": "UTF",
-    "iconUTF": "📰"
+    "iconKind": 1,
+    "iconData": "8J+TsA=="
 }

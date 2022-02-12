@@ -5,9 +5,10 @@ all:
 clean.gen:
 	for api in $$(ls api); do rm -fr \
 		go/pkg/$${api}/$${api}_grpc.pb.go \
-		go/pkg/$${api}/ipfsman.pb.go \
+		go/pkg/$${api}/$${api}.pb.go \
 		rn/src/api/$${api} \
 	; done
+	rm -f go/bind/labs/modules.go
 	rm -f rn/src/api/index.ts
 .PHONY: clean-gen
 
@@ -29,6 +30,7 @@ generate:
 		echo "export * as $${api} from './$${api}/v1'" >> rn/src/api/index.ts; \
 	done
 	$(MAKE) -C rn lint.fix
+	cd rn && npx ts-node src/create-mod/gen-go-modules-list
 .PHONY: generate
 
 regen: clean.gen
