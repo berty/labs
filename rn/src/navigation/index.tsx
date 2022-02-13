@@ -22,6 +22,7 @@ import {
 	HTMLModule,
 	IPFSLogs,
 	Browser,
+	Wikipedia,
 } from '@berty-labs/screens'
 import { defaultColors } from '@berty-labs/styles'
 
@@ -110,6 +111,11 @@ export const Navigation: React.FC = React.memo(() => {
 				name={'Browser'}
 				component={Browser}
 				options={{ ...screenOptions, title: 'Browser' }}
+			/>
+			<NavigationStack.Screen
+				name='Wikipedia'
+				component={Wikipedia}
+				options={{ ...screenOptions, title: 'Wikipedia' }}
 			/>
 		</NavigationStack.Navigator>
 	)
