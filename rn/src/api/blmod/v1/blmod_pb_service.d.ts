@@ -17,7 +17,7 @@ type LabsModulesServiceAllModules = {
 type LabsModulesServiceRunModule = {
 	readonly methodName: string
 	readonly service: typeof LabsModulesService
-	readonly requestStream: false
+	readonly requestStream: true
 	readonly responseStream: true
 	readonly requestType: typeof blmod_v1_blmod_pb.RunModuleRequest
 	readonly responseType: typeof blmod_v1_blmod_pb.RunModuleResponse
@@ -77,7 +77,6 @@ export class LabsModulesServiceClient {
 		) => void,
 	): UnaryResponse
 	runModule(
-		requestMessage: blmod_v1_blmod_pb.RunModuleRequest,
 		metadata?: grpc.Metadata,
-	): ResponseStream<blmod_v1_blmod_pb.RunModuleResponse>
+	): BidirectionalStream<blmod_v1_blmod_pb.RunModuleRequest, blmod_v1_blmod_pb.RunModuleResponse>
 }

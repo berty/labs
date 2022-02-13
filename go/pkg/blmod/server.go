@@ -48,6 +48,8 @@ type moduleContext struct {
 	srv LabsModulesService_RunModuleServer
 }
 
+var _ ModuleContext = (*moduleContext)(nil)
+
 func (mc *moduleContext) Send(v interface{}) error {
 	bytes, err := json.Marshal(v)
 	if err != nil {
@@ -56,7 +58,22 @@ func (mc *moduleContext) Send(v interface{}) error {
 	return mc.srv.Send(&RunModuleResponse{Payload: bytes})
 }
 
-func (s *Server) RunModule(req *RunModuleRequest, srv LabsModulesService_RunModuleServer) error {
+func (mc *moduleContext) Recv(v interface{}) error {
+	reply, err := mc.srv.Recv()
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(reply.GetPayload(), v); err != nil {
+		return errors.Wrap(err, "unmarshal JSON")
+	}
+	return nil
+}
+
+func (s *Server) RunModule(srv LabsModulesService_RunModuleServer) error {
+	req, err := srv.Recv()
+	if err != nil {
+		return errors.Wrap(err, "read header")
+	}
 	mod, err := s.reg.Get(req.GetName())
 	if err != nil {
 		return errors.Wrap(err, "get module")

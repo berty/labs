@@ -12,7 +12,6 @@ require (
 	github.com/ipfs/go-ds-flatfs v0.5.1
 	github.com/ipfs/go-ds-leveldb v0.5.0
 	github.com/ipfs/go-ds-sql v0.3.0
-	github.com/ipfs/go-ipfs-api v0.3.0
 	github.com/ipfs/go-ipfs-chunker v0.0.5
 	github.com/ipfs/go-ipfs-config v0.18.0
 	github.com/multiformats/go-multiaddr v0.5.0
@@ -92,6 +91,7 @@ require (
 	github.com/ipfs/go-fs-lock v0.0.7 // indirect
 	github.com/ipfs/go-graphsync v0.11.0 // indirect
 	github.com/ipfs/go-ipfs v0.11.0 // indirect
+	github.com/ipfs/go-ipfs-api v0.3.0 // indirect
 	github.com/ipfs/go-ipfs-blockstore v0.2.1 // indirect
 	github.com/ipfs/go-ipfs-cmds v0.6.0 // indirect
 	github.com/ipfs/go-ipfs-delay v0.0.1 // indirect
@@ -218,6 +218,7 @@ require (
 	github.com/prometheus/common v0.30.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/prometheus/statsd_exporter v0.21.0 // indirect
+	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/spacemonkeygo/spacelog v0.0.0-20180420211403-2296661a0572 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect

@@ -20,7 +20,7 @@ message ModuleInfo {
 
 service LabsModulesService {
     rpc AllModules(AllModulesRequest) returns (AllModulesResponse) {}
-    rpc RunModule(RunModuleRequest) returns (stream RunModuleResponse) {}
+    rpc RunModule(stream RunModuleRequest) returns (stream RunModuleResponse) {}
 }
 
 
@@ -33,8 +33,11 @@ message AllModulesResponse {
 }
 
 message RunModuleRequest {
-    string name = 1;
-    bytes args = 2;
+    bytes payload = 1;
+
+    // Header data
+    string name = 2;
+    bytes args = 3;
 }
 
 message RunModuleResponse {

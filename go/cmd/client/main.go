@@ -60,13 +60,20 @@ func main() {
 		if len(*argsFlag) != 0 {
 			args = []byte(*argsFlag)
 		}
-		cl, err := client.RunModule(context.Background(), &blmod.RunModuleRequest{
-			Name: *runFlag,
-			Args: args,
-		})
+		cl, err := client.RunModule(context.Background())
 		if err != nil {
 			log.Fatalf("fail to start running module: %v", err)
 		}
+		if err := cl.Send(&blmod.RunModuleRequest{
+			Name: *runFlag,
+			Args: args,
+		}); err != nil {
+			log.Fatalf("fail to send header: %v", err)
+		}
+		if err := cl.CloseSend(); err != nil {
+			log.Fatalf("fail to close send: %v", err)
+		}
+
 		for {
 			reply, err := cl.Recv()
 			if err == io.EOF {

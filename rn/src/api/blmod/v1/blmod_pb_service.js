@@ -22,7 +22,7 @@ LabsModulesService.AllModules = {
 LabsModulesService.RunModule = {
 	methodName: 'RunModule',
 	service: LabsModulesService,
-	requestStream: false,
+	requestStream: true,
 	responseStream: true,
 	requestType: blmod_v1_blmod_pb.RunModuleRequest,
 	responseType: blmod_v1_blmod_pb.RunModuleResponse,
@@ -70,37 +70,43 @@ LabsModulesServiceClient.prototype.allModules = function allModules(
 	}
 }
 
-LabsModulesServiceClient.prototype.runModule = function runModule(requestMessage, metadata) {
+LabsModulesServiceClient.prototype.runModule = function runModule(metadata) {
 	var listeners = {
 		data: [],
 		end: [],
 		status: [],
 	}
-	var client = grpc.invoke(LabsModulesService.RunModule, {
-		request: requestMessage,
+	var client = grpc.client(LabsModulesService.RunModule, {
 		host: this.serviceHost,
 		metadata: metadata,
 		transport: this.options.transport,
-		debug: this.options.debug,
-		onMessage: function (responseMessage) {
-			listeners.data.forEach(function (handler) {
-				handler(responseMessage)
-			})
-		},
-		onEnd: function (status, statusMessage, trailers) {
-			listeners.status.forEach(function (handler) {
-				handler({ code: status, details: statusMessage, metadata: trailers })
-			})
-			listeners.end.forEach(function (handler) {
-				handler({ code: status, details: statusMessage, metadata: trailers })
-			})
-			listeners = null
-		},
 	})
+	client.onEnd(function (status, statusMessage, trailers) {
+		listeners.status.forEach(function (handler) {
+			handler({ code: status, details: statusMessage, metadata: trailers })
+		})
+		listeners.end.forEach(function (handler) {
+			handler({ code: status, details: statusMessage, metadata: trailers })
+		})
+		listeners = null
+	})
+	client.onMessage(function (message) {
+		listeners.data.forEach(function (handler) {
+			handler(message)
+		})
+	})
+	client.start(metadata)
 	return {
 		on: function (type, handler) {
 			listeners[type].push(handler)
 			return this
+		},
+		write: function (requestMessage) {
+			client.send(requestMessage)
+			return this
+		},
+		end: function () {
+			client.finishSend()
 		},
 		cancel: function () {
 			listeners = null
