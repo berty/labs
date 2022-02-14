@@ -67,12 +67,12 @@ node_modules/.mkt: yarn.lock package.json $(wildcard patches/*)
 
 #### iOS
 
-ios/vendor/bundle: ios/Gemfile ios/Gemfile.lock
-	cd ios && bundle install
+vendor/bundle: Gemfile Gemfile.lock
+	eval "$$(frum init)" && bundle install
 	touch $@
 
-ios/Pods/.mkt: $(IOS_CORE) ios/Podfile ios/Podfile.lock node_modules/.mkt ios/vendor/bundle
-	cd ios && bundle exec pod install --repo-update
+ios/Pods/.mkt: $(IOS_CORE) ios/Podfile ios/Podfile.lock node_modules/.mkt vendor/bundle
+	eval "$$(frum init)" && cd ios && bundle exec pod install --repo-update
 	touch $@
 
 #### Android
