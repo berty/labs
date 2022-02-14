@@ -18,7 +18,10 @@ export type ScreensParams = {
 	}
 	IPFSLogs: undefined
 	Browser: undefined
+	Wikipedia: undefined
 }
+
+export type ScreenName = keyof ScreensParams
 
 export type ScreenProps<T extends keyof ScreensParams> = NativeStackScreenProps<ScreensParams, T>
 

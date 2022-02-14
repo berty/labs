@@ -174,6 +174,17 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 	const items = React.useMemo<ToolItemParams[]>(() => {
 		return [
 			{
+				key: 'rn-distributed-wikipedia',
+				title: 'Wikipedia',
+				desc: 'Distributed read-only Wikipedia',
+				onPress: () => navigate('Wikipedia'),
+				avatar: (
+					<View style={utfIconContainerStyle}>
+						<Text style={utfIconStyle}>W</Text>
+					</View>
+				),
+			},
+			{
 				key: 'rn-ipfs-web-ui',
 				title: 'IPFS Web Interface',
 				desc: 'Inspect IPFS node and network',
