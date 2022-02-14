@@ -4,6 +4,7 @@ METRO_RN_PORT ?= 8081
 IOS_RN_FLAGS ?=
 IOS_DEVICE ?=
 ANDROID_DEVICE ?=
+CI ?= false
 CORE_PACKAGE = berty.tech/labs/go/bind/labs
 IOS_CORE = react-native-labs-bridge/ios/Labs.xcframework
 GO ?= go
@@ -60,7 +61,7 @@ unlink:
 
 node_modules/.mkt: yarn.lock package.json $(wildcard patches/*)
 	$(MAKE) unlink
-	yarn
+	yarn $(if $(filter $(CI), true), --frozen-lockfile)
 	$(MAKE) .link
 	touch $@
 
