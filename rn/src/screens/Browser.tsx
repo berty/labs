@@ -1,40 +1,33 @@
 import React, { useState } from 'react'
-import { Pressable, Text, TextInput, TextInputProps, View } from 'react-native'
+import { Text, TextInputProps } from 'react-native'
 import WebView from 'react-native-webview'
 
 import { ScreenFC } from '@berty-labs/navigation'
-import { AppScreenContainer, Card, Loader, LoaderScreen } from '@berty-labs/components'
+import {
+	AppScreenContainer,
+	Card,
+	Loader,
+	LoaderScreen,
+	TextInputCard,
+} from '@berty-labs/components'
 import { useGomobileIPFS } from '@berty-labs/react-redux'
 import { defaultColors } from '@berty-labs/styles'
 
 const space = 15
 
-const URLInput: React.FC<Omit<TextInputProps, 'style'> & { onConfirm?: () => void }> = ({
-	onConfirm,
-	...props
-}) => {
-	const textSize = 20
+const URLInput: React.FC<
+	Omit<TextInputProps, 'style'> & {
+		onConfirm?: () => void
+	}
+> = props => {
 	return (
-		<>
-			<Card style={{ margin: space }}>
-				<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-					<TextInput
-						style={{
-							color: defaultColors.text,
-							flex: 1,
-							fontSize: textSize,
-						}}
-						placeholder='Enter address...'
-						autoCapitalize='none'
-						autoCorrect={false}
-						{...props}
-					/>
-					<Pressable onPress={onConfirm}>
-						<Text style={{ fontSize: textSize }}>➡️</Text>
-					</Pressable>
-				</View>
-			</Card>
-		</>
+		<TextInputCard
+			placeholder='Enter address...'
+			autoCapitalize='none'
+			autoCorrect={false}
+			textSize={20}
+			{...props}
+		/>
 	)
 }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
 	TouchableOpacity,
 	TouchableOpacityProps,
@@ -7,6 +7,10 @@ import {
 	ViewProps,
 	ActivityIndicator,
 	Pressable,
+	ViewStyle,
+	TextInput,
+	TextInputProps,
+	PressableProps,
 } from 'react-native'
 
 import { defaultColors } from '@berty-labs/styles'
@@ -75,3 +79,36 @@ export const LoaderCard: React.FC<
 		{children}
 	</Card>
 ))
+
+const rowStyle: ViewStyle = { flexDirection: 'row', alignItems: 'center' }
+
+export const TextInputCard: React.FC<
+	{
+		style?: ViewStyle
+		textSize?: number
+		onConfirm?: PressableProps['onPress']
+		confirmText?: string
+	} & Omit<TextInputProps, 'style'>
+> = React.memo(({ style, textSize = 20, onConfirm, confirmText = '➡️', ...props }) => {
+	const textInputStyle: ViewStyle = useMemo(
+		() => ({
+			color: defaultColors.text,
+			flex: 1,
+			fontSize: textSize,
+		}),
+		[textSize],
+	)
+	const textStyle = useMemo(() => ({ fontSize: textSize }), [textSize])
+	return (
+		<Card style={style}>
+			<View style={rowStyle}>
+				<TextInput style={textInputStyle} {...props} />
+				{typeof onConfirm === 'function' && (
+					<Pressable onPress={onConfirm}>
+						<Text style={textStyle}>{confirmText}</Text>
+					</Pressable>
+				)}
+			</View>
+		</Card>
+	)
+})

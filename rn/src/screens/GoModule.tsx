@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react'
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'
+import { ScrollView, Text } from 'react-native'
 
 import { ScreenFC, useAppNavigation } from '@berty-labs/navigation'
 import { useAppDispatch, useAppSelector, useLabsModulesClient } from '@berty-labs/react-redux'
-import { AppScreenContainer, Card, LoaderCard } from '@berty-labs/components'
+import { AppScreenContainer, Card, LoaderCard, TextInputCard } from '@berty-labs/components'
 import { defaultColors } from '@berty-labs/styles'
 import { blmod } from '@berty-labs/api'
 import {
@@ -101,39 +101,20 @@ export const GoModule: ScreenFC<'GoModule'> = ({
 	return (
 		<AppScreenContainer>
 			<ScrollView style={{ margin: space }}>
-				{!running && (
-					<Card style={{ marginBottom: space }}>
-						<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-							<TextInput
-								style={{
-									color: defaultColors.text,
-									flex: 1,
-									fontSize: textSize,
-									textAlignVertical: 'center',
-								}}
-								placeholder='Enter args...'
-								onChangeText={handleArgsChange}
-								value={args}
-							/>
-							<Pressable onPress={handleRun}>
-								<Text
-									style={{
-										fontSize: textSize,
-										textAlignVertical: 'center',
-									}}
-								>
-									🏃
-								</Text>
-							</Pressable>
-						</View>
-					</Card>
-				)}
-				{running && (
+				{running ? (
 					<LoaderCard
 						text='Running...'
 						style={{ marginBottom: space }}
 						size={textSize}
 						onCancel={handleCancel}
+					/>
+				) : (
+					<TextInputCard
+						placeholder='Enter args...'
+						onChangeText={handleArgsChange}
+						style={{ marginBottom: space }}
+						onConfirm={handleRun}
+						confirmText='🏃'
 					/>
 				)}
 				{!!(running || text) && (
