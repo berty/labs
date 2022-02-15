@@ -69,7 +69,7 @@ android/app/gradlew.bat
 # Berty
 
 /.link
-/ios/vendor/
+/vendor/
 /gomobile-ipfs/
 /ios/vendored_pods/
 /react-native-labs-bridge/ios/Labsbridge.xcframework

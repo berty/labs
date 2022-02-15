@@ -77,21 +77,10 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Setup Bundler
-        if: ${{ matrix.selfhosted }}
-        working-directory: ./rn/ios
-        run: |
-          gem --version
-          gem install bundler --user-install
-          bundler -v
-          bundle update --bundler
-
-      - name: Cache Ruby modules
-        uses: actions/cache@v2.1.6
+      - uses: ruby/setup-ruby@v1
         with:
-          path: rn/ios/vendor/bundle
-          key: ${{ runner.OS }}-bundle-v2-${{ hashFiles('rn/Gemfile.lock') }}
-          restore-keys: ${{ runner.OS }}-bundle-v2-
+          working-directory: rn
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
       - name: Setup macOS keychain
         working-directory: rn/ios/dummy-identity
