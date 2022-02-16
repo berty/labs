@@ -11,6 +11,7 @@ import (
 
 type ModuleContext interface {
 	Send(interface{}) error
+	Recv(interface{}) error
 }
 
 type Module interface {

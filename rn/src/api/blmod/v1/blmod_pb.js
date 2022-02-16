@@ -710,7 +710,8 @@ proto.blmod.v1.RunModuleRequest.prototype.toObject = function(opt_includeInstanc
  */
 proto.blmod.v1.RunModuleRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    name: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    payload: msg.getPayload_asB64(),
+    name: jspb.Message.getFieldWithDefault(msg, 2, ""),
     args: msg.getArgs_asB64()
   };
 
@@ -749,10 +750,14 @@ proto.blmod.v1.RunModuleRequest.deserializeBinaryFromReader = function(msg, read
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setPayload(value);
+      break;
+    case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setName(value);
       break;
-    case 2:
+    case 3:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setArgs(value);
       break;
@@ -785,17 +790,24 @@ proto.blmod.v1.RunModuleRequest.prototype.serializeBinary = function() {
  */
 proto.blmod.v1.RunModuleRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getPayload_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      1,
+      f
+    );
+  }
   f = message.getName();
   if (f.length > 0) {
     writer.writeString(
-      1,
+      2,
       f
     );
   }
   f = message.getArgs_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      2,
+      3,
       f
     );
   }
@@ -803,11 +815,53 @@ proto.blmod.v1.RunModuleRequest.serializeBinaryToWriter = function(message, writ
 
 
 /**
- * optional string name = 1;
+ * optional bytes payload = 1;
+ * @return {!(string|Uint8Array)}
+ */
+proto.blmod.v1.RunModuleRequest.prototype.getPayload = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * optional bytes payload = 1;
+ * This is a type-conversion wrapper around `getPayload()`
+ * @return {string}
+ */
+proto.blmod.v1.RunModuleRequest.prototype.getPayload_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getPayload()));
+};
+
+
+/**
+ * optional bytes payload = 1;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getPayload()`
+ * @return {!Uint8Array}
+ */
+proto.blmod.v1.RunModuleRequest.prototype.getPayload_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getPayload()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.blmod.v1.RunModuleRequest} returns this
+ */
+proto.blmod.v1.RunModuleRequest.prototype.setPayload = function(value) {
+  return jspb.Message.setProto3BytesField(this, 1, value);
+};
+
+
+/**
+ * optional string name = 2;
  * @return {string}
  */
 proto.blmod.v1.RunModuleRequest.prototype.getName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
@@ -816,21 +870,21 @@ proto.blmod.v1.RunModuleRequest.prototype.getName = function() {
  * @return {!proto.blmod.v1.RunModuleRequest} returns this
  */
 proto.blmod.v1.RunModuleRequest.prototype.setName = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional bytes args = 2;
+ * optional bytes args = 3;
  * @return {!(string|Uint8Array)}
  */
 proto.blmod.v1.RunModuleRequest.prototype.getArgs = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /**
- * optional bytes args = 2;
+ * optional bytes args = 3;
  * This is a type-conversion wrapper around `getArgs()`
  * @return {string}
  */
@@ -841,7 +895,7 @@ proto.blmod.v1.RunModuleRequest.prototype.getArgs_asB64 = function() {
 
 
 /**
- * optional bytes args = 2;
+ * optional bytes args = 3;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getArgs()`
@@ -858,7 +912,7 @@ proto.blmod.v1.RunModuleRequest.prototype.getArgs_asU8 = function() {
  * @return {!proto.blmod.v1.RunModuleRequest} returns this
  */
 proto.blmod.v1.RunModuleRequest.prototype.setArgs = function(value) {
-  return jspb.Message.setProto3BytesField(this, 2, value);
+  return jspb.Message.setProto3BytesField(this, 3, value);
 };
 
 

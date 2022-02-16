@@ -18,7 +18,11 @@ import { utf8 } from '@berty-labs/encoding'
 
 const space = 15
 
-const streams: { [key: string]: blmod.ResponseStream<blmod.RunModuleResponse> | undefined } = {}
+const streams: {
+	[key: string]:
+		| blmod.BidirectionalStream<blmod.RunModuleRequest, blmod.RunModuleResponse>
+		| undefined
+} = {}
 
 export const GoModule: ScreenFC<'GoModule'> = ({
 	route: {
@@ -45,7 +49,7 @@ export const GoModule: ScreenFC<'GoModule'> = ({
 			req.setArgs(utf8.encode(args))
 		}
 
-		const cl = modulesClient.runModule(req)
+		const cl = modulesClient.runModule()
 		streams[name] = cl
 
 		cl.on('data', reply => {
@@ -83,6 +87,9 @@ export const GoModule: ScreenFC<'GoModule'> = ({
 		cl.on('status', (...args) => {
 			console.log('status:', ...args)
 		})
+
+		cl.write(req)
+		cl.end()
 	}, [args, dispatch, modulesClient, name, state])
 	const handleArgsChange = useCallback(
 		(args: string) => dispatch(setModuleArgs({ name, args })),

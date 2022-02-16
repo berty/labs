@@ -94,6 +94,11 @@ export namespace AllModulesResponse {
 }
 
 export class RunModuleRequest extends jspb.Message {
+	getPayload(): Uint8Array | string
+	getPayload_asU8(): Uint8Array
+	getPayload_asB64(): string
+	setPayload(value: Uint8Array | string): void
+
 	getName(): string
 	setName(value: string): void
 
@@ -117,6 +122,7 @@ export class RunModuleRequest extends jspb.Message {
 
 export namespace RunModuleRequest {
 	export type AsObject = {
+		payload: Uint8Array | string
 		name: string
 		args: Uint8Array | string
 	}

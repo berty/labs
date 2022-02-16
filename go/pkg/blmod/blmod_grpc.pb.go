@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LabsModulesServiceClient interface {
 	AllModules(ctx context.Context, in *AllModulesRequest, opts ...grpc.CallOption) (*AllModulesResponse, error)
-	RunModule(ctx context.Context, in *RunModuleRequest, opts ...grpc.CallOption) (LabsModulesService_RunModuleClient, error)
+	RunModule(ctx context.Context, opts ...grpc.CallOption) (LabsModulesService_RunModuleClient, error)
 }
 
 type labsModulesServiceClient struct {
@@ -43,28 +43,27 @@ func (c *labsModulesServiceClient) AllModules(ctx context.Context, in *AllModule
 	return out, nil
 }
 
-func (c *labsModulesServiceClient) RunModule(ctx context.Context, in *RunModuleRequest, opts ...grpc.CallOption) (LabsModulesService_RunModuleClient, error) {
+func (c *labsModulesServiceClient) RunModule(ctx context.Context, opts ...grpc.CallOption) (LabsModulesService_RunModuleClient, error) {
 	stream, err := c.cc.NewStream(ctx, &LabsModulesService_ServiceDesc.Streams[0], "/blmod.v1.LabsModulesService/RunModule", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &labsModulesServiceRunModuleClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
 	return x, nil
 }
 
 type LabsModulesService_RunModuleClient interface {
+	Send(*RunModuleRequest) error
 	Recv() (*RunModuleResponse, error)
 	grpc.ClientStream
 }
 
 type labsModulesServiceRunModuleClient struct {
 	grpc.ClientStream
+}
+
+func (x *labsModulesServiceRunModuleClient) Send(m *RunModuleRequest) error {
+	return x.ClientStream.SendMsg(m)
 }
 
 func (x *labsModulesServiceRunModuleClient) Recv() (*RunModuleResponse, error) {
@@ -80,7 +79,7 @@ func (x *labsModulesServiceRunModuleClient) Recv() (*RunModuleResponse, error) {
 // for forward compatibility
 type LabsModulesServiceServer interface {
 	AllModules(context.Context, *AllModulesRequest) (*AllModulesResponse, error)
-	RunModule(*RunModuleRequest, LabsModulesService_RunModuleServer) error
+	RunModule(LabsModulesService_RunModuleServer) error
 	mustEmbedUnimplementedLabsModulesServiceServer()
 }
 
@@ -91,7 +90,7 @@ type UnimplementedLabsModulesServiceServer struct {
 func (UnimplementedLabsModulesServiceServer) AllModules(context.Context, *AllModulesRequest) (*AllModulesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllModules not implemented")
 }
-func (UnimplementedLabsModulesServiceServer) RunModule(*RunModuleRequest, LabsModulesService_RunModuleServer) error {
+func (UnimplementedLabsModulesServiceServer) RunModule(LabsModulesService_RunModuleServer) error {
 	return status.Errorf(codes.Unimplemented, "method RunModule not implemented")
 }
 func (UnimplementedLabsModulesServiceServer) mustEmbedUnimplementedLabsModulesServiceServer() {}
@@ -126,15 +125,12 @@ func _LabsModulesService_AllModules_Handler(srv interface{}, ctx context.Context
 }
 
 func _LabsModulesService_RunModule_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(RunModuleRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(LabsModulesServiceServer).RunModule(m, &labsModulesServiceRunModuleServer{stream})
+	return srv.(LabsModulesServiceServer).RunModule(&labsModulesServiceRunModuleServer{stream})
 }
 
 type LabsModulesService_RunModuleServer interface {
 	Send(*RunModuleResponse) error
+	Recv() (*RunModuleRequest, error)
 	grpc.ServerStream
 }
 
@@ -144,6 +140,14 @@ type labsModulesServiceRunModuleServer struct {
 
 func (x *labsModulesServiceRunModuleServer) Send(m *RunModuleResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func (x *labsModulesServiceRunModuleServer) Recv() (*RunModuleRequest, error) {
+	m := new(RunModuleRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // LabsModulesService_ServiceDesc is the grpc.ServiceDesc for LabsModulesService service.
@@ -163,6 +167,7 @@ var LabsModulesService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "RunModule",
 			Handler:       _LabsModulesService_RunModule_Handler,
 			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "blmod/v1/blmod.proto",
