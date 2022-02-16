@@ -3,7 +3,7 @@ RN_ROOT=../..
 BUNDLE_ROOT=$(RN_ROOT)/html-mods.bundle
 BUILD_TARGET=$(BUNDLE_ROOT)/$(NAME)
 INDEX_HTML=$(BUILD_TARGET)/index.html
-NODE_MODULES_TARGET=node_modules/.mkt
+NODE_MODULES_TARGET=node_modules
 DIST_DIR=build
 SOURCES=$(shell find src public)
 

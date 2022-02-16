@@ -3,11 +3,11 @@ RN_ROOT=../..
 BUNDLE_ROOT=$(RN_ROOT)/html-mods.bundle
 BUILD_TARGET=$(BUNDLE_ROOT)/$(NAME)
 INDEX_HTML=$(BUILD_TARGET)/index.html
-NODE_MODULES_TARGET=node_modules/.mkt
+NODE_MODULES=node_modules
 DIST_DIR=build
 SOURCES=$(shell find src public)
 
-$(INDEX_HTML): $(NODE_MODULES_TARGET) $(SOURCES) info.json
+$(INDEX_HTML): $(NODE_MODULES) $(SOURCES) info.json
 	@echo --- Build Module ---
 	rm -fr $(DIST_DIR)
 	npm run build
@@ -18,10 +18,10 @@ $(INDEX_HTML): $(NODE_MODULES_TARGET) $(SOURCES) info.json
 	cp -r $(DIST_DIR) $(BUILD_TARGET)
 	cp info.json $(BUILD_TARGET)/info.json
 
-$(NODE_MODULES_TARGET): package.json
+$(NODE_MODULES): package.json
 	npm install
 	touch $@
 
-dev: $(NODE_MODULES_TARGET)
+dev: $(NODE_MODULES)
 	npm start
 .PHONY: dev
