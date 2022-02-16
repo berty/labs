@@ -9,6 +9,7 @@ import {
 	LoaderCard,
 	LoaderScreen,
 	PressableCard,
+	TextInputCard,
 } from '@berty-labs/components'
 import { useGomobileIPFS } from '@berty-labs/react-redux'
 import { defaultColors } from '@berty-labs/styles'
@@ -38,11 +39,15 @@ const cardStyle = { marginTop: space, marginHorizontal: space }
 // - Allow to go up
 // - Allow to bookmark pages ? since no search could be really painful
 
+const ipn = '/ipns/en.wikipedia-on-ipfs.org'
+
 export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 	const mobileIPFS = useGomobileIPFS()
 	const [localError, setLocalError] = useState('')
 	const [loaded, setLoaded] = useState(false)
 	const [showResolveError, setShowResolveError] = useState(false)
+	const [inputArticle, setInputArticle] = useState('')
+	const [targetArticle, setTargetArticle] = useState('')
 	const [resolvedCID, loadedCID, resolveErr] = useAsyncTransform(
 		async (ac: AbortController) => {
 			if (!mobileIPFS.apiURL) {
@@ -50,9 +55,7 @@ export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 			}
 			setShowResolveError(true)
 			const reply = await fetch(
-				`${mobileIPFS.apiURL}/api/v0/resolve?arg=${encodeURIComponent(
-					'/ipns/en.wikipedia-on-ipfs.org',
-				)}`,
+				`${mobileIPFS.apiURL}/api/v0/resolve?arg=${encodeURIComponent(ipn)}`,
 				{
 					signal: ac.signal,
 					method: 'POST',
@@ -76,6 +79,12 @@ export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 
 	return (
 		<AppScreenContainer>
+			<TextInputCard
+				placeholder='Enter article name...'
+				style={cardStyle}
+				onChangeText={setInputArticle}
+				onConfirm={() => setTargetArticle(inputArticle)}
+			/>
 			{showResolveError && !!resolveErr && (
 				<PressableCard
 					title='Failed to resolve IPN'
@@ -83,7 +92,10 @@ export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 					onPress={() => setShowResolveError(false)}
 				>
 					<Text style={{ color: defaultColors.text }}>
-						Using fallback from: {fallbackDate}
+						{ipn}
+						{'\n\n'}Using fallback from: {fallbackDate}
+						{'\n\n'}
+						{fallbackCID}
 						{'\n\n'}Tap to hide{`\n\n${resolveErr}`}
 					</Text>
 				</PressableCard>
@@ -97,7 +109,6 @@ export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 				<LoaderCard style={cardStyle} text='Resolving content identifier...' />
 			)}
 			{!loaded && <LoaderCard style={cardStyle} text='Loading page...' />}
-
 			<WebView
 				style={{
 					marginTop: space,
@@ -105,7 +116,7 @@ export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 					display: loaded ? undefined : 'none',
 				}}
 				source={{
-					uri: mobileIPFS.gatewayURL + cid,
+					uri: mobileIPFS.gatewayURL + cid + (targetArticle ? `/wiki/${targetArticle}` : ''),
 				}}
 				containerStyle={{ backgroundColor: defaultColors.background }}
 				renderError={err => (

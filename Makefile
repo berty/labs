@@ -10,7 +10,7 @@ clean.gen:
 	; done
 	rm -f go/bind/labs/modules.go
 	rm -f rn/src/api/index.ts
-.PHONY: clean-gen
+.PHONY: clean.gen
 
 generate:
 	$(MAKE) -C rn node_modules/.mkt

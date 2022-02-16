@@ -120,12 +120,14 @@ func (reg *Registry) Close() error {
 type UnimplementedModule struct {
 }
 
+var _ Module = (*UnimplementedModule)(nil)
+
 func (um *UnimplementedModule) Info() (*ModuleInfo, error) {
 	return nil, ErrNotImplemented
 }
 
-func (um *UnimplementedModule) Run(context.Context) ([]ModuleResult, error) {
-	return nil, ErrNotImplemented
+func (um *UnimplementedModule) Run(ctx context.Context, args []byte, mc ModuleContext) error {
+	return ErrNotImplemented
 }
 
 func (um *UnimplementedModule) Close() error {
