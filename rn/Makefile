@@ -8,6 +8,7 @@ CI ?= false
 CORE_PACKAGE = berty.tech/labs/go/bind/labs
 IOS_CORE = react-native-labs-bridge/ios/Labs.xcframework
 GO ?= go
+go_srcs := $(call rwildcard,../go,*.go *.m *.h) ../go.sum
 
 gomobile-ipfs-src=gomobile-ipfs/packages/build/ios/cocoapods
 gomobile-ipfs-dst=ios/vendored_pods
@@ -32,13 +33,16 @@ html-mods.all:
 ### js
 
 .PHONY: ios
-ios: node_modules/.mkt ios/Pods/.mkt html-mods.all
+ios: node_modules ios/Pods html-mods.all
 	npx react-native run-ios \
 	--port="$(METRO_RN_PORT)" \
 	$(if $(IOS_DEVICE),--udid='$(IOS_DEVICE)',) \
 	$(IOS_RN_FLAGS)
 
-$(IOS_CORE): ../go.mod ../go.sum $(shell find ../go -name '*.go')
+.PHONY: ios.core
+ios.core: $(IOS_CORE)
+
+$(IOS_CORE): $(go_srcs)
 	$(GO) run golang.org/x/mobile/cmd/gomobile init -v
 	CGO_CPPFLAGS=-DHAVE_GETHOSTUUID=0 $(GO) run golang.org/x/mobile/cmd/gomobile bind \
 		$(GOMOBILE_OPT) \
@@ -59,7 +63,7 @@ unlink:
 	cd react-native-labs-bridge && yarn unlink || true
 	rm -f .link
 
-node_modules/.mkt: yarn.lock package.json $(wildcard patches/*)
+node_modules: yarn.lock package.json $(wildcard patches/*)
 	$(MAKE) unlink
 	yarn $(if $(filter $(CI), true), --frozen-lockfile)
 	$(MAKE) .link
@@ -71,38 +75,38 @@ vendor/bundle: Gemfile Gemfile.lock
 	eval "$$(frum init)" && bundle install
 	touch $@
 
-ios/Pods/.mkt: $(IOS_CORE) ios/Podfile ios/Podfile.lock node_modules/.mkt vendor/bundle
+ios/Pods: $(IOS_CORE) ios/Podfile ios/Podfile.lock node_modules vendor/bundle
 	eval "$$(frum init)" && cd ios && bundle exec pod install --repo-update
 	touch $@
 
 #### Android
 
 .PHONY: android
-android: node_modules/.mkt
+android: node_modules
 	npx react-native run-android \
 		--port="$(METRO_RN_PORT)"
 
 #### Lint
 
 .PHONY: lint
-lint: node_modules/.mkt
+lint: node_modules
 	yarn lint
 	npx tsc
 
 .PHONY: lint.fix
-lint.fix: node_modules/.mkt
+lint.fix: node_modules
 	yarn lint --fix
 	npx tsc
 
 #### React-Native
 
 .PHONY: metro.start
-metro.start: node_modules/.mkt
+metro.start: node_modules
 	npx react-native start --port=$(METRO_RN_PORT)
 
 
 .PHONY: create-module
-create-module: node_modules/.mkt
+create-module: node_modules
 	SKIP_PREFLIGHT_CHECK=true npx ts-node -TH --files ./src/create-mod
 
 .PHONY: clean

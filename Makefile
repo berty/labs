@@ -13,7 +13,7 @@ clean.gen:
 .PHONY: clean.gen
 
 generate:
-	$(MAKE) -C rn node_modules/.mkt
+	$(MAKE) -C rn node_modules
 	buf generate api
 	set -e; for api in $$(ls api); do \
 		echo '/* eslint-disable no-dupe-class-members */' > rn/src/api/$${api}/v1/$${api}_pb_service.new.d.ts; \
