@@ -44,7 +44,7 @@ jobs:
           #    optimized      WIP
           #
           # TODO: use a github action secret to pass the builder strategy dynamically
-          node .github/workflows/mac-runner-matrix-builder.js github
+          node .github/workflows/mac-runner-matrix-builder.js dc4
 
   build:
     needs: mac_runner_matrix_builder
@@ -77,7 +77,18 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      # ImageOS is required by this step but not set on self-hosted runners
       - uses: ruby/setup-ruby@v1
+        if: ${{ matrix.selfhosted }}
+        with:
+          working-directory: rn
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+        env:
+          ImageOS: macos12
+
+      # Use inherited ImageOS on github runners
+      - uses: ruby/setup-ruby@v1
+        if: ${{ !matrix.selfhosted }}
         with:
           working-directory: rn
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
