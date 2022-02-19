@@ -3,7 +3,7 @@ module berty.tech/labs
 go 1.17
 
 require (
-	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
+	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/ipfs-shipyard/gomobile-ipfs/go v0.0.0-20220201124626-a36f2adc5a3a
 	github.com/ipfs/go-datastore v0.5.1
