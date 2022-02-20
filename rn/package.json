@@ -34,7 +34,7 @@
     "text-encoding": "^0.7.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
+    "@babel/core": "^7.17.5",
     "@babel/plugin-proposal-export-namespace-from": "^7.16.7",
     "@babel/preset-env": "^7.1.8",
     "@babel/runtime": "^7.12.5",
