@@ -13,7 +13,7 @@ require (
 	github.com/ipfs/go-ds-leveldb v0.5.0
 	github.com/ipfs/go-ds-sql v0.3.0
 	github.com/ipfs/go-ipfs-chunker v0.0.5
-	github.com/ipfs/go-ipfs-config v0.18.0
+	github.com/ipfs/go-ipfs-config v0.19.0
 	github.com/multiformats/go-multiaddr v0.5.0
 	github.com/mutecomm/go-sqlcipher/v4 v4.4.2
 	github.com/peterbourgon/ff/v3 v3.1.2
