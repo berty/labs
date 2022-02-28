@@ -34,6 +34,15 @@ const URLInput: React.FC<
 
 const PageLoader = () => <LoaderScreen text='Rendering page...' />
 
+const uriSchemeRegexp = /$\w+:\/\//
+
+const uriForceHTTPS = (uri: string) => {
+	if (uri.match(uriSchemeRegexp)) {
+		return uri
+	}
+	return 'https://' + uri
+}
+
 export const Browser: ScreenFC<'Browser'> = () => {
 	const mobileIPFS = useGomobileIPFS()
 	const [localError, setLocalError] = useState('')
@@ -41,7 +50,7 @@ export const Browser: ScreenFC<'Browser'> = () => {
 	const [loaded, setLoaded] = useState(false)
 	const [uri, setURI] = useState('')
 	const handleConfirm = React.useCallback(() => {
-		setURI(entryURI)
+		setURI(uriForceHTTPS(entryURI))
 	}, [entryURI])
 
 	if (mobileIPFS.status !== 'up') {
