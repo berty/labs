@@ -41,6 +41,10 @@ const cardStyle = { marginTop: space, marginHorizontal: space }
 
 const ipn = '/ipns/en.wikipedia-on-ipfs.org'
 
+type IPFSResolved = {
+	Path?: string
+}
+
 export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 	const mobileIPFS = useGomobileIPFS()
 	const [localError, setLocalError] = useState('')
@@ -48,7 +52,7 @@ export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 	const [showResolveError, setShowResolveError] = useState(false)
 	const [inputArticle, setInputArticle] = useState('')
 	const [targetArticle, setTargetArticle] = useState('')
-	const [resolvedCID, loadedCID, resolveErr] = useAsyncTransform(
+	const [freshCID, resolving, resolveErr] = useAsyncTransform(
 		async (ac: AbortController) => {
 			if (!mobileIPFS.apiURL) {
 				return
@@ -64,14 +68,14 @@ export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 			if (!reply.ok) {
 				throw new Error(`Unexpected status: ${reply.status}\n${await reply.text()}`)
 			}
-			const text = await reply.text()
-			console.log('resolved:', text)
-			return text
+			const r: IPFSResolved = await reply.json()
+			console.log('resolved:', r)
+			return r.Path
 		},
 		[mobileIPFS.apiURL],
 	)
 
-	const cid = resolvedCID || fallbackCID
+	const cid = freshCID || fallbackCID
 
 	if (mobileIPFS.status !== 'up') {
 		return <LoaderScreen text='Waiting for IPFS node...' />
@@ -105,9 +109,7 @@ export const Wikipedia: ScreenFC<'Wikipedia'> = () => {
 					<Text style={{ color: defaultColors.text }}>{`${resolveErr}`}</Text>
 				</Card>
 			)}
-			{!loadedCID && !resolveErr && (
-				<LoaderCard style={cardStyle} text='Resolving content identifier...' />
-			)}
+			{resolving && <LoaderCard style={cardStyle} text='Resolving content identifier...' />}
 			{!loaded && <LoaderCard style={cardStyle} text='Loading page...' />}
 			<WebView
 				style={{
