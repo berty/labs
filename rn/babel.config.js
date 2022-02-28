@@ -10,5 +10,6 @@ module.exports = {
 				},
 			},
 		],
+		'@babel/plugin-proposal-numeric-separator',
 	],
 }

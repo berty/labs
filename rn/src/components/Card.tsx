@@ -12,6 +12,7 @@ import {
 	TextInputProps,
 	PressableProps,
 } from 'react-native'
+import Color from 'color'
 
 import { defaultColors } from '@berty-labs/styles'
 
@@ -102,7 +103,11 @@ export const TextInputCard: React.FC<
 	return (
 		<Card style={style}>
 			<View style={rowStyle}>
-				<TextInput style={textInputStyle} {...props} />
+				<TextInput
+					style={textInputStyle}
+					placeholderTextColor={Color(defaultColors.text).alpha(0.5).hexa()}
+					{...props}
+				/>
 				{typeof onConfirm === 'function' && (
 					<Pressable onPress={onConfirm}>
 						<Text style={textStyle}>{confirmText}</Text>
