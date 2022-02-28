@@ -25,6 +25,7 @@ const URLInput: React.FC<
 			placeholder='Enter address...'
 			autoCapitalize='none'
 			autoCorrect={false}
+			style={{ marginHorizontal: space, marginBottom: space }}
 			textSize={20}
 			{...props}
 		/>
