@@ -113,9 +113,15 @@ jobs:
         working-directory: rn
         run: make react-native-labs-bridge/ios/Labs.xcframework
 
-      - name: Install iOS app deps (XCode Workspace)
+      - name: Install iOS app deps (CocoaPods)
         working-directory: rn
         run: make ios/Pods
+
+      - name: Check Podfile.lock diff
+        working-directory: rn
+        run: |
+          set -euo pipefail -o xtrace
+          if [[ $(git diff --text ios/Podfile.lock 2>&1 | tee $RUNNER_TEMP/berty-podfile.diff) ]]; then cat $RUNNER_TEMP/berty-podfile.diff && false; fi
 
       # TODO: create action that automatically clones modules repos or use submodules
 
