@@ -36,7 +36,7 @@ export const useAsyncTransform = <
 		start()
 		return () => {
 			ac.abort()
-			setResult([undefined, true, undefined])
+			setResult([undefined, false, undefined])
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [memoizedTransform, ...(args || [])])
