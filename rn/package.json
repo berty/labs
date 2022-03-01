@@ -13,7 +13,7 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.5.5",
     "@improbable-eng/grpc-web": "^0.15.0",
-    "@react-native-async-storage/async-storage": "1.15.15",
+    "@react-native-async-storage/async-storage": "1.16.1",
     "@react-navigation/native": "^6.0.8",
     "@react-navigation/native-stack": "^6.5.0",
     "@reduxjs/toolkit": "^1.7.2",
