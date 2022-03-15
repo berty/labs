@@ -130,14 +130,14 @@ jobs:
         with:
           repository: ipfs-examples/js-ipfs-http-client-upload-file
           path: rn/html-mods/ipfs-upload-file/repo
-          ref: 44f4cd8bd0178e39e59eb8ab685dccecc4b64c89
+          ref: 2e763dc1ab593cd68622b95a2d6713854c32a6c5
 
       - name: Checkout ipns-publish
         uses: actions/checkout@v2
         with:
           repository: ipfs-examples/js-ipfs-browser-ipns-publish
           path: rn/html-mods/ipns-publish/repo
-          ref: b5d5bf16236ad3052101e5893b9adcde332fbc23
+          ref: 91d4d5837fcc7f1cf5be479f2809d7224fc50483
 
       - name: Build HTML Modules
         working-directory: rn
