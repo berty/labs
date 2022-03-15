@@ -83,6 +83,7 @@ type HTMLModule = {
 	iconKind?: 'UTF'
 	iconUTF?: string
 	infoError?: unknown
+	preamble?: string
 }
 
 const maxOpacity = 1
@@ -160,6 +161,7 @@ export const ToolsList: React.FC<{ searchText: string }> = React.memo(({ searchT
 					shortDescription: pbInfo.shortDescription,
 					iconKind: 'UTF',
 					iconUTF,
+					preamble: pbInfo.preamble,
 				}
 				return info
 			} catch (err) {

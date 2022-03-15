@@ -11,10 +11,11 @@ export type ScreensParams = {
 	ArtCollection: undefined
 	NodeManager: undefined
 	NodeConfig: { name: string }
-	GoModule: { name: string; displayName: string }
+	GoModule: { name: string; displayName?: string; preamble?: string }
 	HTMLModule: {
 		name: string
 		displayName?: string
+		preamble?: string
 	}
 	IPFSLogs: undefined
 	Browser: undefined
