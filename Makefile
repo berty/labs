@@ -33,6 +33,15 @@ generate:
 	cd rn && npx ts-node src/create-mod/gen-go-modules-list
 .PHONY: generate
 
+lint.proto:
+	buf lint api
+	buf breaking --against 'https://github.com/berty/labs.git'
+.PHONY: lint.proto
+
+lint: lint.proto
+	$(MAKE) -C rn lint
+.PHONY: lint
+
 regen: clean.gen
 	$(MAKE) generate
 .PHONY: regen

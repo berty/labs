@@ -26,7 +26,7 @@ jobs:
           version: 1.0.0-rc11
 
       - name: Lint
-        run: buf lint api
+        run: make lint.proto
 
       - name: Setup protoc
         uses: arduino/setup-protoc@v1.1.2
