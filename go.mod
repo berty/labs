@@ -19,7 +19,7 @@ require (
 	github.com/peterbourgon/ff/v3 v3.1.2
 	github.com/pkg/errors v0.9.1
 	github.com/syndtr/goleveldb v1.0.0
-	go.uber.org/multierr v1.7.0
+	go.uber.org/multierr v1.8.0
 	go.uber.org/zap v1.20.0
 	golang.org/x/mobile v0.0.0-20220112015953-858099ff7816
 	google.golang.org/grpc v1.44.0
