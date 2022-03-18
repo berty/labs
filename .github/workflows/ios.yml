@@ -29,7 +29,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - id: set-matrix
@@ -55,7 +55,7 @@ jobs:
       matrix: ${{fromJson(needs.mac_runner_matrix_builder.outputs.matrix)}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -126,14 +126,14 @@ jobs:
       # TODO: create action that automatically clones modules repos or use submodules
 
       - name: Checkout ipfs-upload-file
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ipfs-examples/js-ipfs-http-client-upload-file
           path: rn/html-mods/ipfs-upload-file/repo
           ref: 2e763dc1ab593cd68622b95a2d6713854c32a6c5
 
       - name: Checkout ipns-publish
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: ipfs-examples/js-ipfs-browser-ipns-publish
           path: rn/html-mods/ipns-publish/repo
