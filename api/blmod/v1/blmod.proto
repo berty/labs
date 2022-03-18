@@ -16,6 +16,7 @@ message ModuleInfo {
     IconKind icon_kind = 3;
     bytes icon_data = 4;
     string short_description = 5;
+    string preamble = 6;
 }
 
 service LabsModulesService {

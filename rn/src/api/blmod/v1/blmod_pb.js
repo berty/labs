@@ -169,7 +169,8 @@ proto.blmod.v1.ModuleInfo.toObject = function(includeInstance, msg) {
     displayName: jspb.Message.getFieldWithDefault(msg, 2, ""),
     iconKind: jspb.Message.getFieldWithDefault(msg, 3, 0),
     iconData: msg.getIconData_asB64(),
-    shortDescription: jspb.Message.getFieldWithDefault(msg, 5, "")
+    shortDescription: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    preamble: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
   if (includeInstance) {
@@ -225,6 +226,10 @@ proto.blmod.v1.ModuleInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.setShortDescription(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPreamble(value);
       break;
     default:
       reader.skipField();
@@ -287,6 +292,13 @@ proto.blmod.v1.ModuleInfo.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       5,
+      f
+    );
+  }
+  f = message.getPreamble();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
       f
     );
   }
@@ -414,6 +426,24 @@ proto.blmod.v1.ModuleInfo.prototype.getShortDescription = function() {
  */
 proto.blmod.v1.ModuleInfo.prototype.setShortDescription = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional string preamble = 6;
+ * @return {string}
+ */
+proto.blmod.v1.ModuleInfo.prototype.getPreamble = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.blmod.v1.ModuleInfo} returns this
+ */
+proto.blmod.v1.ModuleInfo.prototype.setPreamble = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 

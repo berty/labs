@@ -2,5 +2,6 @@
     "displayName": "IPFS File Upload",
     "shortDescription": "Upload a file to IPFS",
     "iconKind": 1,
-    "iconData": "4qyG77iP"
+    "iconData": "4qyG77iP",
+    "preamble": "Author: Harlan T Wood <code@harlantwood.net>\n\nhttps://github.com/ipfs-examples/js-ipfs-http-client-upload-file"
 }
