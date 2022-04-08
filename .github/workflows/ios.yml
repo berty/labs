@@ -168,7 +168,7 @@ jobs:
           zip -r ${{ github.workspace }}/BertyLabs.dummy-signed-ipa Payload
 
       - name: Upload the Archive
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ${{ github.workspace }}/BertyLabs.dummy-signed-ipa
           name: berty-labs-${{github.sha}}.dummy-signed-ipa
