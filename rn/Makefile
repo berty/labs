@@ -72,7 +72,7 @@ node_modules: yarn.lock package.json $(wildcard patches/*)
 #### iOS
 
 vendor/bundle: Gemfile Gemfile.lock
-	eval "$$(frum init)" && bundle install
+	frum install && eval "$$(frum init)" && bundle install
 	touch $@
 
 ios/Pods: $(IOS_CORE) ios/Podfile ios/Podfile.lock node_modules vendor/bundle
