@@ -16,7 +16,7 @@ require (
 	github.com/ipfs/go-ipfs-config v0.19.0
 	github.com/multiformats/go-multiaddr v0.5.0
 	github.com/mutecomm/go-sqlcipher/v4 v4.4.2
-	github.com/peterbourgon/ff/v3 v3.1.2
+	github.com/peterbourgon/ff/v3 v3.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/syndtr/goleveldb v1.0.0
 	go.uber.org/multierr v1.8.0
