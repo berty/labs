@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: codfish/semantic-release-action@v1
+      - uses: codfish/semantic-release-action@v2
         if: github.ref == 'refs/heads/master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
