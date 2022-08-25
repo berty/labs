@@ -21,6 +21,9 @@ export class ModuleInfo extends jspb.Message {
 	getShortDescription(): string
 	setShortDescription(value: string): void
 
+	getPreamble(): string
+	setPreamble(value: string): void
+
 	serializeBinary(): Uint8Array
 	toObject(includeInstance?: boolean): ModuleInfo.AsObject
 	static toObject(includeInstance: boolean, msg: ModuleInfo): ModuleInfo.AsObject
@@ -38,6 +41,7 @@ export namespace ModuleInfo {
 		iconKind: ModuleInfo.IconKindMap[keyof ModuleInfo.IconKindMap]
 		iconData: Uint8Array | string
 		shortDescription: string
+		preamble: string
 	}
 
 	export interface IconKindMap {

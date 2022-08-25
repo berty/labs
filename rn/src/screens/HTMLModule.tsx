@@ -1,15 +1,18 @@
 import React from 'react'
 import { Text } from 'react-native'
 import { WebView } from 'react-native-webview'
+import Hyperlink from 'react-native-hyperlink'
 
 import { ScreenFC, useAppNavigation } from '@berty-labs/navigation'
 import { defaultColors } from '@berty-labs/styles'
-import { AppScreenContainer, LoaderScreen } from '@berty-labs/components'
+import { AppScreenContainer, Card, LoaderScreen } from '@berty-labs/components'
 import { useGomobileIPFS } from '@berty-labs/react-redux'
+
+const space = 15
 
 export const HTMLModule: ScreenFC<'HTMLModule'> = ({
 	route: {
-		params: { name, displayName },
+		params: { name, displayName, preamble },
 	},
 }) => {
 	const nav = useAppNavigation()
@@ -17,11 +20,8 @@ export const HTMLModule: ScreenFC<'HTMLModule'> = ({
 	const [localError, setLocalError] = React.useState<string>()
 
 	React.useEffect(() => {
-		if (!displayName) {
-			return
-		}
-		nav.setOptions({ title: displayName })
-	}, [nav, displayName])
+		nav.setOptions({ title: displayName || name })
+	}, [nav, displayName, name])
 
 	if (mobileIPFS.status !== 'up') {
 		return <LoaderScreen text='Waiting for IPFS node...' />
@@ -35,6 +35,15 @@ export const HTMLModule: ScreenFC<'HTMLModule'> = ({
 	}
 	return (
 		<AppScreenContainer>
+			{!!preamble && (
+				<Card style={{ marginBottom: space }}>
+					<Hyperlink linkDefault={true}>
+						<Text style={{ color: defaultColors.text }} selectable={true}>
+							{preamble.trim()}
+						</Text>
+					</Hyperlink>
+				</Card>
+			)}
 			<WebView
 				style={{ backgroundColor: defaultColors.background }}
 				source={{

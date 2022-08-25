@@ -31,8 +31,8 @@ export const GoModule: ScreenFC<'GoModule'> = ({
 }) => {
 	const { setOptions } = useAppNavigation()
 	React.useEffect(() => {
-		setOptions({ title: displayName })
-	}, [setOptions, displayName])
+		setOptions({ title: displayName || name })
+	}, [setOptions, displayName, name])
 	const { state, text, error, args } = useAppSelector(state => selectModuleState(state, name))
 	const running = state === 'running'
 	const dispatch = useAppDispatch()
