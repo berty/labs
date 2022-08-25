@@ -20,7 +20,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/syndtr/goleveldb v1.0.0
 	go.uber.org/multierr v1.8.0
-	go.uber.org/zap v1.20.0
+	go.uber.org/zap v1.23.0
 	golang.org/x/mobile v0.0.0-20220112015953-858099ff7816
 	google.golang.org/grpc v1.44.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
