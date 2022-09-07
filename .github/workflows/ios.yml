@@ -103,7 +103,7 @@ jobs:
         run: make node_modules
 
       - name: Cache Gomobile framework
-        uses: n0izn0iz/mkache@5cedaeaf0b39a9220ae5a815cac8d2a924cee3ef
+        uses: n0izn0iz/mkache@eed9cfe64d00dd64cbb36bec915d41dd6fab9f6c
         with:
           rule: react-native-labs-bridge/ios/Labs.xcframework
           makefile: rn/Makefile
