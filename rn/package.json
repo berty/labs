@@ -26,7 +26,7 @@
     "react-native": "0.67.2",
     "react-native-labs-bridge": "./react-native-labs-bridge",
     "react-native-safe-area-context": "^3.3.2",
-    "react-native-screens": "^3.11.1",
+    "react-native-screens": "^3.18.1",
     "react-native-svg": "^12.1.1",
     "react-native-webview": "^11.17.2",
     "react-redux": "^7.2.6",
